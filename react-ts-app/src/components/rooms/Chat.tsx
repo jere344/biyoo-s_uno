@@ -17,14 +17,12 @@ export default function Chat() {
     const notificationSound = new Audio('https://cdn.pixabay.com/download/audio/2023/12/09/audio_37d2c0e795.mp3?filename=tap-notification-180637.mp3');
 
     const CurrentUserName = localStorage.getItem(storageUsernameKey);
-    console.log(CurrentUserName);
 
     // Fetch initial chat messages for the room
     const fetchMessages = () => {
         ChatDS.getMessages(roomId)
             .then((response) => {
                 setMessages(response.data);
-                console.log("Initial messages fetched:", response.data);
             })
             .catch((error) => {
                 console.error("Error fetching chat messages:", error);
@@ -48,7 +46,6 @@ export default function Chat() {
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log("WebSocket message received:", data);
             
             if (data.message) {
                 // Play notification sound for new messages
@@ -75,7 +72,7 @@ export default function Chat() {
             }
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [roomId, notificationSound]);
+    }, [roomId]);
 
     // Scroll to bottom effect
     useEffect(() => {

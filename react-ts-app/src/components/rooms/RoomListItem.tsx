@@ -38,8 +38,6 @@ export default function RoomListItem({ room }: RoomProps) {
     setColor(colors[Math.floor(Math.random() * colors.length)]);
   }, [room.id]);
 
-  console.log(room);
-
   const handleJoinRoom = () => {
     RoomDS.join(room.id).then((response) => {
       navigate(`/room/${response.data.id}`);

@@ -10,7 +10,8 @@ import RoomDS from "../../data_services/RoomDS";
 
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import Chat from "./Chat";
+// import Chat from "./Chat";
+import UnoGame from "./UnoGame";
 
 export default function Room() {
     const { id } = useParams();
@@ -28,7 +29,6 @@ export default function Room() {
         RoomDS.getOne(parseInt(id, 10))
             .then((response) => {
                 setRoom(response.data);
-                console.log("Room fetched:", response.data);
             })
             .catch((error) => {
                 console.error("Error fetching room:", error);
@@ -184,24 +184,12 @@ export default function Room() {
 
                 {/* Center: Game Area */}
                 <Grid item xs={12} md={8}>
-                    <Paper
-                        sx={{
-                            padding: "1rem",
-                            minHeight: "800px",
-                            border: "2px dashed #9e9e9e",
-                            backgroundColor: "#f1f8e9",
-                        }}
-                    >
-                        <Typography variant="h6" gutterBottom>
-                            Game Board
-                        </Typography>
-                        <Typography variant="body2">The game will be displayed here.</Typography>
-                    </Paper>
+                    <UnoGame />
                 </Grid>
 
                 {/* Right: Chat Area */}
                 <Grid item xs={12} md={4}>
-                    <Chat />
+                    {/* <Chat /> */}
                 </Grid>
             </Grid>
         </Container>

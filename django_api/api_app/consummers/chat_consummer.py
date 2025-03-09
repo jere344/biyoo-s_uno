@@ -2,21 +2,10 @@ import datetime
 import json 
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
-from channels.auth import AuthMiddlewareStack
 from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 from urllib.parse import parse_qs
-from django.conf import settings
 from api_app.models import Message
-
-# export default interface IMessage {
-#   id: number;
-#   room_id: number;
-#   sender: IUser;
-#   content: string;
-#   created_at: string;
-# }
-
 
 
 class ChatConsumer(JsonWebsocketConsumer):
@@ -34,6 +23,9 @@ class ChatConsumer(JsonWebsocketConsumer):
                 user_id = access_token['user_id']
                 User = get_user_model()
                 self.user = User.objects.get(id=user_id)
+                if self.user.room_id != self.room_id:
+                    print(f"User {self.user.username} tried to connect to a room he is not in")
+                    self.close()
                 self.scope['user'] = self.user
             except Exception as e:
                 self.close()
