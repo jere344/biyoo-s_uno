@@ -10,11 +10,13 @@ import RoomDS from "../../data_services/RoomDS";
 
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useRoom } from "../../contexts/RoomContext";
 // import Chat from "./Chat";
 import UnoGame from "./UnoGame";
 
 export default function Room() {
     const { id } = useParams();
+    const { leaveRoom } = useRoom();
     const [room, setRoom] = useState<IRoom>({
         id: 0,
         name: "",
@@ -26,6 +28,8 @@ export default function Room() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!id) return;
+        
         RoomDS.getOne(parseInt(id, 10))
             .then((response) => {
                 setRoom(response.data);
@@ -34,6 +38,12 @@ export default function Room() {
                 console.error("Error fetching room:", error);
                 navigate("/");
             });
+            
+        // Cleanup when component unmounts
+        return () => {
+            // Don't leave the room when just re-rendering
+            // The leaveRoom will be called explicitly when the user clicks "Leave Room"
+        };
     }, [navigate, id]);
 
     const [editingName, setEditingName] = useState(false);
@@ -82,6 +92,7 @@ export default function Room() {
     const handleLeaveRoom = () => {
         RoomDS.leave(room)
             .then(() => {
+                leaveRoom();
                 navigate("/");
             })
             .catch((error) => {

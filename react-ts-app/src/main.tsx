@@ -14,33 +14,36 @@ import UserEditView from "./components/user/UserEditView";
 import UserDeleteView from "./components/user/UserDeleteView";
 import CreateRoomView from "./components/rooms/CreateRoomView";
 import Room from "./components/rooms/Room";
-
+import { RoomProvider } from "./contexts/RoomContext";
+import RoomGuard from "./components/RoomGuard";
 import Home from "./components/Home";
-
-
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route path="" element={<Home />} />
-          <Route path="create-room" element={<CreateRoomView />} />
-          <Route path="room/:id" element={<Room />} />
-        
-          <Route path="" element={<AuthContainer />}>
-            <Route path="login" element={<LoginView />} />
-            <Route path="signup" element={<SignUpView />} />
-            <Route path="" element={<ProtectedRoutes />}>
-              <Route path="user-edit/me" element={<UserEditView />} />
-              <Route path="password-edit/me" element={<PasswordEditView />} />
-              <Route path="delete-me" element={<UserDeleteView />} />
+      <RoomProvider>
+        <RoomGuard>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route path="" element={<Home />} />
+              <Route path="create-room" element={<CreateRoomView />} />
+              <Route path="room/:id" element={<Room />} />
+            
+              <Route path="" element={<AuthContainer />}>
+                <Route path="login" element={<LoginView />} />
+                <Route path="signup" element={<SignUpView />} />
+                <Route path="" element={<ProtectedRoutes />}>
+                  <Route path="user-edit/me" element={<UserEditView />} />
+                  <Route path="password-edit/me" element={<PasswordEditView />} />
+                  <Route path="delete-me" element={<UserDeleteView />} />
+                </Route>
+              </Route>
             </Route>
-          </Route>
-        </Route>
-        <Route path="logout" element={<Logout />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+            <Route path="logout" element={<Logout />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </RoomGuard>
+      </RoomProvider>
     </BrowserRouter>
   </StrictMode>
 );

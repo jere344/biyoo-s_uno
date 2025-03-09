@@ -21,8 +21,6 @@ class UnoGameRules:
         for player in self.players:
             if self.players.count(player) > 1:
                 raise Exception("Duplicate player")
-            if UnoPlayer.objects.filter(user=player).exists():
-                raise Exception("Player already in a game")
         
 
 class UnoGameService:
@@ -41,6 +39,10 @@ class UnoGameService:
         # distribute cards then assign player number and save
         distributed = 0
         for user in rules.players:
+            existing = UnoPlayer.objects.filter(user=user)
+            if existing.exists():
+                existing.delete()
+
             player = UnoPlayer.objects.create(user=user, player_number=rules.players.index(user), game=self.game)
             player.hand.set(rules.starting_deck[distributed:distributed + rules.starting_cards_count])
             distributed += rules.starting_cards_count
@@ -50,19 +52,24 @@ class UnoGameService:
         self.game.current_card = rules.starting_deck[distributed]
         self.game.pile.set(rules.starting_deck[distributed + 1:])
         self.game.save()
-        
-
     
+    def _set_to_next_turn(self):
+        if self.game.direction:
+            self.game.current_player_number = (self.game.current_player_number + 1) % self.game.players.count()
+        else:
+            self.game.current_player_number = (self.game.current_player_number - 1) % self.game.players.count()
+        
     def finish_turn(self):
         if self.game.current_player.hand.count() == 0:
             self.game.game_over = True
+            self.game.winner = self.game.current_player
             self.game.save()
             return
-        if self.game.direction:
-            self.game.current_player_number = (self.game.current_player_number + 1) % len(self.game.players)
-        else:
-            self.game.current_player_number = (self.game.current_player_number - 1) % len(self.game.players)
+        self._set_to_next_turn()
         self.game.save()
+    
+    def get_player(self, user):
+        return UnoPlayer.objects.get(user=user, game=self.game)
         
     def can_place(self, player:UnoPlayer, card:UnoCard):
         """default can_place implementation. Can be replaced for custom rules"""
@@ -84,22 +91,41 @@ class UnoGameService:
                 return False
         return True
 
-    def play_card(self, player:UnoPlayer, card:UnoCard):
+    def play_card(self, user, card:UnoCard):
         """play a card and finish the turn"""
-        self.can_place(self.game, card, player)
+        player = self.get_player(user)
+        self.can_place(player, card)
 
         self.game.pile.add(self.game.current_card)
         self.game.current_card = card
         player.hand.remove(card)
         player.save()
+
+        if card.action == "reverse":
+            self.game.direction = not self.game.direction
+        elif card.action == "draw_two":
+            self.stored_to_draw += 2
+        elif card.action == "draw_four":
+            self.stored_to_draw += 4
+        elif card.action == "skip":
+            # if put on a +2, it cancel the draw. Else it skips the next player
+            if self.stored_to_draw == 0:
+                self.stored_to_draw = 0
+            else :
+                self._set_to_next_turn()
     
         self.finish_turn()
 
-    def draw_card(self, player:UnoPlayer):
+    def draw_card(self, user):
         """draw a card and finish the turn"""
+        player = self.get_player(user)
         if player.player_number != self.game.current_player_number:
             raise Exception("It's not your turn")
-        self._draw_one(player)
+        if self.stored_to_draw != 0:
+            for _ in range(self.stored_to_draw):
+                self._draw_one(player)
+        else :
+            self._draw_one(player)
         
         self.finish_turn()
     
@@ -112,13 +138,10 @@ class UnoGameService:
             player.said_uno = False
             player.save()
     
-    def change_direction(self):
-        self.game.direction = not self.game.direction
-        self.game.save()
-    
-    def say_uno(self, player:UnoPlayer):
+    def say_uno(self, user):
         """announce that you have one card left
         can be done only if you have one card, or two cards during your turn"""
+        player = self.get_player(user)
         card_count = player.hand.count()
         if card_count == 1 or (card_count == 2 and self.game.current_player_number == player.player_number):
             player.said_uno = True
@@ -126,8 +149,9 @@ class UnoGameService:
         else:
             raise Exception("You can't say uno")
 
-    def deny_uno(self, target_player:UnoPlayer):
+    def deny_uno(self, target_user):
         """has only one card and didn't say uno, draw two cards"""
+        target_player = self.get_player(target_user)
         if target_player.hand.count() == 1 and not target_player.said_uno:
             self._draw_one(target_player)
             self._draw_one(target_player)

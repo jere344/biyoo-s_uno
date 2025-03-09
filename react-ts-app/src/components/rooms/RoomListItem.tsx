@@ -10,8 +10,9 @@ import {
 } from "@mui/material";
 import IRoom from "../../interfaces/IRoom";
 import RoomDS from "../../data_services/RoomDS";
-
 import { useNavigate } from "react-router-dom";
+import { useRoom } from '../../contexts/RoomContext';
+
 type RoomProps = {
   room: IRoom;
 };
@@ -33,6 +34,7 @@ export default function RoomListItem({ room }: RoomProps) {
   // A static list of colors to choose from.
   const [color, setColor] = useState("");
   const navigate = useNavigate();
+  const { joinRoom } = useRoom();
 
   useEffect(() => {
     setColor(colors[Math.floor(Math.random() * colors.length)]);
@@ -40,6 +42,7 @@ export default function RoomListItem({ room }: RoomProps) {
 
   const handleJoinRoom = () => {
     RoomDS.join(room.id).then((response) => {
+      joinRoom(room.id);
       navigate(`/room/${response.data.id}`);
     });
   };

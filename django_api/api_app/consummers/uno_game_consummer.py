@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from urllib.parse import parse_qs
 from api_app.models import Room
 from api_app.services import uno_game_service
-from api_app.models.uno import UnoGame, UnoPlayer, UnoCard
+from api_app.models.uno import UnoGame, UnoCard
 
 
 class UnoGameConsummer(JsonWebsocketConsumer):
@@ -15,14 +15,13 @@ class UnoGameConsummer(JsonWebsocketConsumer):
     connected_users = {}
     
     def connect(self):
-        print("Connecting")
+        self.accept()
         self.room_id = self.scope["url_route"]["kwargs"]["pk"]
         self.room_group_name = f"uno_game_{self.room_id}"
 
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
 
-        print("room_id", self.room_id, "room_group_name", self.room_group_name, "token", token)
         if token:
             try:
                 # Validate token and get user
@@ -31,10 +30,14 @@ class UnoGameConsummer(JsonWebsocketConsumer):
                 User = get_user_model()
                 self.user = User.objects.get(id=user_id)
                 if self.user.room_id != self.room_id:
-                    raise  Exception(f"User {self.user.username} tried to connect to a room he is not in")
+                    raise Exception(f"User tried to connect to a room he is not in")
                 self.scope["user"] = self.user
                 self.room = Room.objects.get(id=self.room_id)
             except Exception as e:
+                self.send_json({
+                    "type": "error",
+                    "error": str(e)
+                })
                 self.close()
                 return
         else:
@@ -53,8 +56,6 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         if self.room_id not in self.connected_users:
             self.connected_users[self.room_id] = set()
         self.connected_users[self.room_id].add(self.user.id)
-        
-        self.accept()
         
         # Send player count after successful connection
         # if the game has not started, send the player count
@@ -90,13 +91,12 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         })
     
     def get_game_service(self):
-        if not hasattr(self, 'game_service'):
-            try:
-                game = UnoGame.objects.get(room=self.room)
-                self.game_service = uno_game_service.UnoGameService(game)
-            except UnoGame.DoesNotExist:
-                raise ValueError("No game has been started yet")
-        return self.game_service
+        try:
+            # Always get a fresh instance from the database
+            game = UnoGame.objects.get(room=self.room)
+            return uno_game_service.UnoGameService(game)
+        except UnoGame.DoesNotExist:
+            raise ValueError("No game has been started yet")
 
     def disconnect(self, close_code):
         # Remove user from connected users set before disconnecting
@@ -121,6 +121,14 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             self.play_card(content)
         elif content["type"] == "draw_card":
             self.draw_card(content)
+        
+    def restart_game(self, content):
+        self.room = self.room
+        game = UnoGame.objects.get(room=self.room)
+        if game.game_over:
+            game.delete()
+            self.start_game(content)
+
     
     def start_game(self, content):
         self.room = self.room
@@ -134,19 +142,19 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             return
 
         game = UnoGame(room=self.room)
-        self.game_service = uno_game_service.UnoGameService(game)
+        game_service = uno_game_service.UnoGameService(game)
 
         game_rules = uno_game_service.UnoGameRules()
         game_rules.players = list(self.room.users.all())
         game_rules.starting_deck = list(UnoCard.objects.all())
 
-        self.game_service.start_game(game_rules)
+        game_service.start_game(game_rules)
         
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 "type": "game_state",
-                "game": self.game_service.game.to_dict()
+                "game": game_service.game.to_dict()
             }
         )
     
@@ -159,7 +167,7 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             self.room_group_name,
             {
                 "type": "game_state",
-                "game": self.game_service.game.to_dict()
+                "game": game_service.game.to_dict()
             }
         )
 
@@ -178,13 +186,14 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         """ Send the game state to the user
         other players' hands and the pile are hidden
         """
+        game_service = self.get_game_service()
         game_dict = event["game"]
         for player in game_dict["players"]:
             if player["user"] != self.user.username:
                 player["hand"] = len(player["hand"])
             else: # if it's the current player, show which card he can play
                 for card in player["hand"]:
-                    card["can_play"] = self.game_service.current_player_can_place(card)
+                    card["can_play"] = game_service.current_player_can_place(card)
         game_dict["pile"] = len(game_dict["pile"])
         
         self.send_json({

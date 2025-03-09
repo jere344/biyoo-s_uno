@@ -41,6 +41,7 @@ export class UnoGameWebsocketDS {
                 const data = JSON.parse(event.data);
                 if (data.type === "game_state") {
                     this.gameState$.next(data.game);
+                    console.log("TEST 4 : Received game state:", data.game);
                 }
                 else if (data.type === "player_count") {
                     this.playerCount$.next(data.count);
@@ -106,6 +107,10 @@ export class UnoGameWebsocketDS {
     // Game action methods
     startGame() {
         this.send({ type: "start_game" });
+    }
+
+    restartGame() {
+        this.send({ type: "restart_game" });
     }
 
     playCard(cardId: number) {

@@ -87,6 +87,12 @@ export default function UnoGame() {
         }
     };
 
+    const handleRestartGame = () => {
+        if (gameService) {
+            gameService.restartGame();
+        }
+    };
+
     // Render opponents (other players)
     const renderOpponents = () => {
         if (!gameState) return null;
@@ -135,7 +141,21 @@ export default function UnoGame() {
         return (
             <Box sx={{ mb: 3, textAlign: "center" }}>
                 {gameState.game_over == true && (
-                    <Alert severity="info">Fin de la partie! Victoire: {gameState.winner || "Nobody"}</Alert>
+                    <Alert 
+                        severity="info" 
+                        action={
+                            <Button 
+                                color="primary" 
+                                size="small" 
+                                variant="contained"
+                                onClick={handleRestartGame}
+                            >
+                                Redémarrer
+                            </Button>
+                        }
+                    >
+                        Fin de la partie! Victoire: {gameState.winner || "Nobody"}
+                    </Alert>
                 )}
 
                 {gameState.game_over == false  && (
@@ -288,10 +308,12 @@ export default function UnoGame() {
 
                 <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
                     {myPlayer?.hand.length > 0 ? (
-                        myPlayer.hand.map((card) => <UnoGameCard key={card.id} card={card} 
-                        isPlayable={isMyTurn && card.can_play} 
-                        modifier={isMyTurn ? (card.can_play ? "highlight" : "darken") : "default"}
-                        onClick={() => handlePlayCard(card.id)} />)
+                        myPlayer.hand.map((card) => 
+                            <UnoGameCard key={card.id} card={card} 
+                                isPlayable={isMyTurn && card.can_play} 
+                                modifier={isMyTurn ? (card.can_play ? "highlight" : "darken") : "default"}
+                                onClick={() => handlePlayCard(card.id)} 
+                            />)
                     ) : (
                         <Typography variant="body1" color="textSecondary">
                             Tu n'as pas de cartes.

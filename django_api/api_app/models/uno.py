@@ -53,9 +53,11 @@ class UnoGame(models.Model):
     current_card = models.ForeignKey(UnoCard, on_delete=models.CASCADE, verbose_name="carte actuelle" , related_name="in_game_current", null=True)
     direction = models.BooleanField(verbose_name="sens du jeu")
     pile = models.ManyToManyField(UnoCard, verbose_name="pioche", related_name="in_game_piles", blank=True)
-    game_over = models.BooleanField(verbose_name="fin de partie")
     current_player_number = models.IntegerField(verbose_name="joueur actuel", null=True)
     room = models.OneToOneField("Room", on_delete=models.CASCADE, verbose_name="salle")
+    stored_to_draw = models.IntegerField(verbose_name="cartes à piocher", default=0) # for +2 and +4 cards
+    game_over = models.BooleanField(verbose_name="fin de partie")
+    winner = models.ForeignKey(UnoPlayer, on_delete=models.CASCADE, verbose_name="gagnant", related_name="won", null=True)
 
     @property
     def current_player(self) -> UnoPlayer:
