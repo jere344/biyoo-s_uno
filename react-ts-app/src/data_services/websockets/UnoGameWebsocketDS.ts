@@ -113,6 +113,10 @@ export class UnoGameWebsocketDS {
         this.send({ type: "restart_game" });
     }
 
+    stopGame() {
+        this.send({ type: "stop_game" });
+    }
+
     playCard(cardId: number) {
         this.send({
             type: "play_card",

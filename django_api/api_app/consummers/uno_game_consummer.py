@@ -57,22 +57,18 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             self.connected_users[self.room_id] = set()
         self.connected_users[self.room_id].add(self.user.id)
         
-        # Send player count after successful connection
-        # if the game has not started, send the player count
         # if the game has started, send the game state
+        # if the game has not started, send the player count
         try:
             game_service = self.get_game_service()
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    "type": "game_state",
-                    "game": game_service.game.to_dict()
-                }
-            )
+            if game_service :
+                self._send_game_state()
+            else :
+                self._send_player_count()
         except ValueError:
-            self.send_player_count()
+            self._send_player_count()
     
-    def send_player_count(self):
+    def _send_player_count(self):
         """Send the current WebSocket player count to all users in the room"""
         player_count = len(self.connected_users.get(self.room_id, set()))
         async_to_sync(self.channel_layer.group_send)(
@@ -83,11 +79,47 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             }
         )
     
+    def _send_game_state(self):
+        """Send the current WebSocket game state to all users in the room"""
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                "type": "websocket_game_state",
+            }
+        )
+    
     def websocket_player_count(self, event):
         """Handle player count event and send to client"""
         self.send_json({
             "type": "player_count",
             "count": event["count"]
+        })
+    
+    def websocket_game_state(self, event):
+        """ Send the game state to the user
+        other players' hands and the pile are hidden
+        """
+        try :
+            game_service = self.get_game_service()
+        except ValueError:
+            self.send_json({
+                "type": "game_state",
+                "game": None
+            })
+            return
+
+        game_dict = game_service.game.to_dict()
+        for player in game_dict["players"]:
+            if player["user"] != self.user.username:
+                player["hand"] = len(player["hand"])
+            else: # if it's the current player, show which card he can play
+                for card in player["hand"]:
+                    card["can_play"] = game_service.current_player_can_place(card)
+        game_dict["pile"] = len(game_dict["pile"])
+        
+        self.send_json({
+            "type": "game_state",
+            "game": game_dict
         })
     
     def get_game_service(self):
@@ -104,7 +136,7 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             if self.room_id in self.connected_users and self.user.id in self.connected_users[self.room_id]:
                 self.connected_users[self.room_id].remove(self.user.id)
                 # Send updated player count
-                self.send_player_count()
+                self._send_player_count()
                 
                 # Clean up empty rooms
                 if not self.connected_users[self.room_id]:
@@ -121,6 +153,31 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             self.play_card(content)
         elif content["type"] == "draw_card":
             self.draw_card(content)
+        elif content["type"] == "restart_game":
+            self.restart_game(content)
+        elif content["type"] == "stop_game":
+            self.stop_game(content)
+        else:
+            self.send_json(
+                {
+                    "type": "error",
+                    "error": "Invalid message type"
+                }
+            )
+    
+    def stop_game(self, content):
+        self.room = self.room
+        game = UnoGame.objects.get(room=self.room)
+        game.delete()
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                "type": "websocket_game_state",
+                "game": None
+            }
+        )
+
         
     def restart_game(self, content):
         self.room = self.room
@@ -129,7 +186,6 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             game.delete()
             self.start_game(content)
 
-    
     def start_game(self, content):
         self.room = self.room
         if UnoGame.objects.filter(room=self.room).exists():
@@ -145,60 +201,28 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         game_service = uno_game_service.UnoGameService(game)
 
         game_rules = uno_game_service.UnoGameRules()
-        game_rules.players = list(self.room.users.all())
+        # game_rules.players = list(self.room.users.all())
+        # instead we take the connected users
+        game_rules.players = [get_user_model().objects.get(id=user_id) for user_id in self.connected_users[self.room_id]]
         game_rules.starting_deck = list(UnoCard.objects.all())
 
         game_service.start_game(game_rules)
         
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                "type": "game_state",
-                "game": game_service.game.to_dict()
-            }
-        )
+        self._send_game_state()
     
     def play_card(self, content):
         card = UnoCard.objects.get(id=content["card_id"])
         game_service = self.get_game_service()
         game_service.play_card(self.user, card)
         
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                "type": "game_state",
-                "game": game_service.game.to_dict()
-            }
-        )
+        self._send_game_state()
 
     def draw_card(self, content):
         game_service = self.get_game_service()
         game_service.draw_card(self.user)
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                "type": "game_state",
-                "game": game_service.game.to_dict()
-            }
-        )
-
-    def game_state(self, event):
-        """ Send the game state to the user
-        other players' hands and the pile are hidden
-        """
-        game_service = self.get_game_service()
-        game_dict = event["game"]
-        for player in game_dict["players"]:
-            if player["user"] != self.user.username:
-                player["hand"] = len(player["hand"])
-            else: # if it's the current player, show which card he can play
-                for card in player["hand"]:
-                    card["can_play"] = game_service.current_player_can_place(card)
-        game_dict["pile"] = len(game_dict["pile"])
         
-        self.send_json({
-            "type": "game_state",
-            "game": game_dict
-        })
+        self._send_game_state()
+
+
 
 

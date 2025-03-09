@@ -24,6 +24,10 @@ class UnoGameRules:
         
 
 class UnoGameService:
+    """
+    Service to manage a game of Uno
+    The service is stateless, it only contains methods to manage the game
+    """
     def __init__(self, game:UnoGame):
         self.game = game
     
@@ -89,6 +93,13 @@ class UnoGameService:
         if card["color"] != self.game.current_card.color and card["color"] != "wild":
             if card["action"] != self.game.current_card.action:
                 return False
+        if self.game.stored_to_draw != 0:
+            if card["action"] not in ["+2", "+4", "skip"]:
+                return False
+            if card["action"] == "+2" and self.game.current_card.action != "+2":
+                return False
+            if card["action"] == "+4" and self.game.current_card.action != "+4":
+                return False
         return True
 
     def play_card(self, user, card:UnoCard):
@@ -103,14 +114,14 @@ class UnoGameService:
 
         if card.action == "reverse":
             self.game.direction = not self.game.direction
-        elif card.action == "draw_two":
-            self.stored_to_draw += 2
-        elif card.action == "draw_four":
-            self.stored_to_draw += 4
+        elif card.action == "+2":
+            self.game.stored_to_draw += 2
+        elif card.action == "+4":
+            self.game.stored_to_draw += 4
         elif card.action == "skip":
             # if put on a +2, it cancel the draw. Else it skips the next player
-            if self.stored_to_draw == 0:
-                self.stored_to_draw = 0
+            if self.game.stored_to_draw == 0:
+                self.game.stored_to_draw = 0
             else :
                 self._set_to_next_turn()
     
@@ -121,9 +132,10 @@ class UnoGameService:
         player = self.get_player(user)
         if player.player_number != self.game.current_player_number:
             raise Exception("It's not your turn")
-        if self.stored_to_draw != 0:
-            for _ in range(self.stored_to_draw):
+        if self.game.stored_to_draw != 0:
+            for _ in range(self.game.stored_to_draw):
                 self._draw_one(player)
+            self.game.stored_to_draw = 0
         else :
             self._draw_one(player)
         

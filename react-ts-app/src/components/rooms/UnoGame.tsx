@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography, Box, Button, Grid, CircularProgress, Alert, Snackbar, Divider, Chip } from "@mui/material";
+import { Paper, Typography, Box, Button, Grid, CircularProgress, Alert, Snackbar, Divider, Chip, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { UnoGameWebsocketDS } from "../../data_services/websockets/UnoGameWebsocketDS";
 import { useParams } from "react-router-dom";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
@@ -16,6 +16,7 @@ export default function UnoGame() {
     );
     const [error, setError] = useState<string | null>(null);
     const [currentUser, setCurrentUser] = useState<string>("");
+    const [openStopDialog, setOpenStopDialog] = useState<boolean>(false);
 
     // Initialize the game service and connect to WebSocket
     useEffect(() => {
@@ -93,6 +94,13 @@ export default function UnoGame() {
         }
     };
 
+    const handleStopGame = () => {
+        if (gameService) {
+            gameService.stopGame();
+            setOpenStopDialog(false);
+        }
+    };
+
     // Render opponents (other players)
     const renderOpponents = () => {
         if (!gameState) return null;
@@ -167,6 +175,15 @@ export default function UnoGame() {
                         <Typography variant="body2">
                             Direction: {gameState.direction === true ? "→" : "←"}
                         </Typography>
+                        <Button 
+                            color="error" 
+                            size="small" 
+                            variant="outlined"
+                            onClick={() => setOpenStopDialog(true)}
+                            sx={{ mt: 1 }}
+                        >
+                            Arrêter la partie
+                        </Button>
                     </Box>
                 )}
             </Box>
@@ -327,6 +344,22 @@ export default function UnoGame() {
                     </Typography>
                 )}
             </Box>
+
+            {/* Stop Game Confirmation Dialog */}
+            <Dialog open={openStopDialog} onClose={() => setOpenStopDialog(false)}>
+                <DialogTitle>Confirmer l'arrêt de la partie</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Attention : Cette action arrêtera la partie pour tous les joueurs. Êtes-vous sûr de vouloir continuer ?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenStopDialog(false)}>Annuler</Button>
+                    <Button onClick={handleStopGame} color="error" variant="contained">
+                        Arrêter la partie
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Paper>
     );
 }
