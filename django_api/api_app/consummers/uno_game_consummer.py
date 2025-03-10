@@ -38,7 +38,7 @@ class UnoGameConsummer(JsonWebsocketConsumer):
                     "type": "error",
                     "error": str(e)
                 })
-                self.close()
+                self.close(code=4000)
                 return
         else:
             self.close()

@@ -47,7 +47,7 @@ export class UnoGameWebsocketDS {
                     this.playerCount$.next(data.count);
                 }
                 else if (data.type === "error") {
-                    console.error("WebSocket error:", data.message);
+                    console.error("WebSocket error:", data.error);
                     this.error$.next(data.error);
                 }
                 else {

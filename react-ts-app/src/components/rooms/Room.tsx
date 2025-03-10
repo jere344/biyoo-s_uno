@@ -179,7 +179,7 @@ export default function Room() {
                     <Paper sx={{ padding: "1rem", backgroundColor: "#e0f7fa" }} >
                         <Box display="flex" flexWrap="wrap" alignItems="center">
                             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                                Joueurs ({room.users.length}/{room.player_limit})
+                                Salle ({room.users.length}/{room.player_limit})
                             </Typography>
                             {room.users.map((user) => (
                                 <Box key={user.id} display="flex" alignItems="center" sx={{ marginRight: "1rem", marginBottom: "0.5rem" }}>

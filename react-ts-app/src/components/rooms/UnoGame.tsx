@@ -158,7 +158,8 @@ export default function UnoGame() {
                     Déconnecté du serveur de jeu.
                     {error && <Box mt={1}>{error}</Box>}
                 </Alert>
-                <Button variant="contained" color="primary" onClick={() => gameService?.connect()} sx={{ mt: 2 }}>
+                <Button variant="contained" color="primary" 
+                    onClick={() => window.location.reload()} sx={{ mt: 2 }}>
                     Réessayer
                 </Button>
             </Paper>
@@ -168,9 +169,8 @@ export default function UnoGame() {
     if (!gameState) {
         return (
             <Paper sx={{ padding: "2rem", textAlign: "center" }}>
-                <CircularProgress size={40} />
                 <Typography variant="body1" sx={{ mt: 2 }}>
-                    En attente des autres joueurs...
+                    Partie non démarrée
                 </Typography>
                 {gamePlayerCount > 0 && (
                     <Typography variant="body2" sx={{ mt: 1 }}>
@@ -186,7 +186,7 @@ export default function UnoGame() {
                         sx={{ mt: 2 }}
                         disabled={gamePlayerCount < 2}
                     >
-                        Commencer le jeu
+                        Commencer le jeu avec {gamePlayerCount} joueurs
                     </Button>
                 )}
             </Paper>
