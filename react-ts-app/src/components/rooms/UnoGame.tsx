@@ -21,47 +21,61 @@ export default function UnoGame() {
     const [colorSelectionOpen, setColorSelectionOpen] = useState<boolean>(false);
     const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
 
-    // Initialize the game service and connect to WebSocket
+    // Add a new state to track if we're ready to connect
+    const [isReadyToConnect, setIsReadyToConnect] = useState(false);
+
+    // Split the initialization into two effects
     useEffect(() => {
-        // Get token from localStorage or other auth system
         const token = localStorage.getItem(storageAccessTokenKey);
         const username = localStorage.getItem(storageUsernameKey);
-        setMyUserName(username);
-
-        if (roomId) {
-            const service = new UnoGameWebsocketDS(parseInt(roomId), token);
+        
+        if (token && username && roomId) {
+            setMyUserName(username);
+            const service = new UnoGameWebsocketDS(roomId, token);
             setGameService(service);
-
-            // Subscribe to observables from the service
-            const gameSubscription = service.gameState$.subscribe((state) => {
-                setGameState(state);
-            });
-
-            const gamePlayerCountSubscription = service.playerCount$.subscribe((count) => {
-                setGamePlayerCount(count);
-            });
-
-            const connectionSubscription = service.connectionStatus$.subscribe((status) => {
-                setConnectionStatus(status);
-            });
-
-            const errorSubscription = service.error$.subscribe((err) => {
-                if (err) setError(err);
-            });
-
-            // Connect to the WebSocket
-            service.connect();
-
-            // Clean up on component unmount
-            return () => {
-                gameSubscription.unsubscribe();
-                gamePlayerCountSubscription.unsubscribe();
-                connectionSubscription.unsubscribe();
-                errorSubscription.unsubscribe();
-                service.disconnect();
-            };
+            setIsReadyToConnect(true);
         }
+        
+        return () => {
+            if (gameService) {
+                gameService.disconnect();
+            }
+        };
     }, [roomId]);
+
+    // Handle WebSocket connection separately
+    useEffect(() => {
+        if (!gameService || !isReadyToConnect) {
+            return;
+        }
+
+        const gameSubscription = gameService.gameState$.subscribe((state) => {
+            setGameState(state);
+        });
+
+        const gamePlayerCountSubscription = gameService.playerCount$.subscribe((count) => {
+            setGamePlayerCount(count);
+        });
+
+        const connectionSubscription = gameService.connectionStatus$.subscribe((status) => {
+            setConnectionStatus(status);
+        });
+
+        const errorSubscription = gameService.error$.subscribe((err) => {
+            if (err) setError(err);
+        });
+
+        // Connect to the WebSocket only when we're ready
+        gameService.connect();
+
+        return () => {
+            gameSubscription.unsubscribe();
+            gamePlayerCountSubscription.unsubscribe();
+            connectionSubscription.unsubscribe();
+            errorSubscription.unsubscribe();
+            gameService.disconnect();
+        };
+    }, [gameService, isReadyToConnect]);
 
     const getMyPlayer = (): UnoPlayer | null => {
         if (!gameState || !myUserName) return null;
