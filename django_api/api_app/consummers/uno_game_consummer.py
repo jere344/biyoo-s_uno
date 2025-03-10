@@ -212,7 +212,14 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         card = UnoCard.objects.get(id=content["card_id"])
         color = content.get("color", None)
         game_service = self.get_game_service()
-        game_service.play_card(self.user, card, color)
+        try :
+            game_service.play_card(self.user, card, color)
+        except ValueError as e:
+            self.send_json({
+                "type": "error",
+                "error": str(e)
+            })
+            return
         
         self._send_game_state()
 

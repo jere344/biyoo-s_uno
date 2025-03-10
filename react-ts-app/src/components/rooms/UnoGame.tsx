@@ -3,7 +3,8 @@ import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar, Dial
 import { UnoGameWebsocketDS } from "../../data_services/websockets/UnoGameWebsocketDS";
 import { useParams } from "react-router-dom";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
-import UnoGameBoard from "./UnoGameBoard";
+// import UnoGameBoard from "./UnoGameBoard";
+import UnoGameBoard3d from "./uno3d/UnoGameBoard3d";
 
 export default function UnoGame() {
     const { id } = useParams(); // room id from route params
@@ -196,7 +197,6 @@ export default function UnoGame() {
     const myPlayer = getMyPlayer();
     const currentPlayer = getCurrentPlayer();
     const isMyTurn = myPlayer && currentPlayer && myPlayer.user === currentPlayer.user;
-    console.log("myPlayer", myPlayer);
 
     return (
         <Paper
@@ -254,7 +254,7 @@ export default function UnoGame() {
             </Dialog>
 
             {/* Game board component */}
-            <UnoGameBoard
+            <UnoGameBoard3d
                 gameState={gameState}
                 myUserName={myUserName}
                 myPlayer={myPlayer}

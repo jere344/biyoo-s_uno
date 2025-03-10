@@ -15,10 +15,11 @@ import {
 import UnoGameCard from "./UnoGameCard";
 import UnoOpponentsList from "./UnoOpponentsList";
 
+
 interface UnoGameBoardProps {
-    gameState: UnoGame;
-    myPlayer: UnoPlayer | null;
-    currentPlayer: UnoPlayer | null;
+    gameState: IUnoGame;
+    myPlayer: IUnoPlayer | null;
+    currentPlayer: IUnoPlayer | null;
     isMyTurn: boolean;
     myUserName: string;
     roomId: number;

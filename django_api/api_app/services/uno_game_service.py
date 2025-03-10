@@ -135,7 +135,7 @@ class UnoGameService:
         player = self.get_player(user)
         if not self.can_place(player, card.to_dict()):
             print("trying to place", card.to_dict(), "on", self.game.current_card.to_dict())
-            raise Exception("You can't place this card")
+            raise ValueError("You can't place this card")
 
         # alternative way of doing things :
             # a bit of a trick, we don't place the current card in the pile but a copy,
@@ -159,7 +159,6 @@ class UnoGameService:
             )
         )
         self.game.current_card = card
-        player.hand.remove(card)
         player.hand.remove(card)
         player.save()
         if "reverse" in card.action:
