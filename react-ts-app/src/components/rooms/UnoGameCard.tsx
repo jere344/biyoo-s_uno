@@ -26,12 +26,13 @@ export const UnoGameCard: React.FC<UnoGameCardProps> = ({
     const { width, height, margin } = sizes[size];
     const highlight = modifier === "highlight";
     const darken = modifier === "darken";
+    console.log(card.image);
 
     const cardStyle: React.CSSProperties = {
         width,
         height,
         margin,
-        backgroundImage: `url(http://localhost:8000${card.image})`,
+        backgroundImage: `url(${card.image})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         cursor: highlight ? "pointer" : "default",

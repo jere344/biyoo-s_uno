@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar } from "@mui/material";
+import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { UnoGameWebsocketDS } from "../../data_services/websockets/UnoGameWebsocketDS";
 import { useParams } from "react-router-dom";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
@@ -15,14 +15,18 @@ export default function UnoGame() {
         "disconnected"
     );
     const [error, setError] = useState<string | null>(null);
-    const [currentUser, setCurrentUser] = useState<string>("");
+    const [myUserName, setMyUserName] = useState<string>("");
+    
+    // Color selection state
+    const [colorSelectionOpen, setColorSelectionOpen] = useState<boolean>(false);
+    const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
 
     // Initialize the game service and connect to WebSocket
     useEffect(() => {
         // Get token from localStorage or other auth system
         const token = localStorage.getItem(storageAccessTokenKey);
         const username = localStorage.getItem(storageUsernameKey);
-        setCurrentUser(username);
+        setMyUserName(username);
 
         if (roomId) {
             const service = new UnoGameWebsocketDS(parseInt(roomId), token);
@@ -60,8 +64,8 @@ export default function UnoGame() {
     }, [roomId]);
 
     const getMyPlayer = (): UnoPlayer | null => {
-        if (!gameState || !currentUser) return null;
-        return gameState.players.find((p) => p.user === currentUser) || null;
+        if (!gameState || !myUserName) return null;
+        return gameState.players.find((p) => p.user.username === myUserName) || null;
     }
 
     const getCurrentPlayer = (): UnoPlayer | null => {
@@ -70,9 +74,31 @@ export default function UnoGame() {
     };
 
     const handlePlayCard = (cardId: number) => {
-        if (gameService) {
+        if (!gameService) return;
+        
+        // Check if the card requires color selection
+        const myPlayer = getMyPlayer();
+        if (!myPlayer) return;
+        
+        const cardToPlay = myPlayer.hand.find(card => card.id === cardId);
+        if (!cardToPlay) return;
+        
+        if (cardToPlay.action.includes("wild")) {
+            // Open color selection dialog
+            setSelectedCardId(cardId);
+            setColorSelectionOpen(true);
+        } else {
+            // Play card directly
             gameService.playCard(cardId);
         }
+    };
+
+    const handleColorSelection = (color: string) => {
+        if (gameService && selectedCardId !== null) {
+            gameService.playCard(selectedCardId, color);
+            setSelectedCardId(null);
+        }
+        setColorSelectionOpen(false);
     };
 
     const handleDrawCard = () => {
@@ -156,6 +182,7 @@ export default function UnoGame() {
     const myPlayer = getMyPlayer();
     const currentPlayer = getCurrentPlayer();
     const isMyTurn = myPlayer && currentPlayer && myPlayer.user === currentPlayer.user;
+    console.log("myPlayer", myPlayer);
 
     return (
         <Paper
@@ -172,13 +199,53 @@ export default function UnoGame() {
                 </Alert>
             </Snackbar>
 
+            {/* Color Selection Dialog */}
+            <Dialog open={colorSelectionOpen} onClose={() => setColorSelectionOpen(false)}>
+                <DialogTitle>Choisir une couleur</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                        <Button 
+                            variant="contained" 
+                            onClick={() => handleColorSelection("red")}
+                            sx={{ bgcolor: 'red', minWidth: '60px', '&:hover': { bgcolor: 'darkred' } }}
+                        >
+                            Rouge
+                        </Button>
+                        <Button 
+                            variant="contained" 
+                            onClick={() => handleColorSelection("blue")}
+                            sx={{ bgcolor: 'blue', minWidth: '60px', '&:hover': { bgcolor: 'darkblue' } }}
+                        >
+                            Bleu
+                        </Button>
+                        <Button 
+                            variant="contained" 
+                            onClick={() => handleColorSelection("green")}
+                            sx={{ bgcolor: 'green', minWidth: '60px', '&:hover': { bgcolor: 'darkgreen' } }}
+                        >
+                            Vert
+                        </Button>
+                        <Button 
+                            variant="contained" 
+                            onClick={() => handleColorSelection("yellow")}
+                            sx={{ bgcolor: '#FFCC00', minWidth: '60px', color: 'black', '&:hover': { bgcolor: '#E6B800' } }}
+                        >
+                            Jaune
+                        </Button>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setColorSelectionOpen(false)}>Annuler</Button>
+                </DialogActions>
+            </Dialog>
+
             {/* Game board component */}
             <UnoGameBoard
                 gameState={gameState}
+                myUserName={myUserName}
                 myPlayer={myPlayer}
                 currentPlayer={currentPlayer}
                 isMyTurn={isMyTurn}
-                currentUser={currentUser}
                 roomId={roomId}
                 connectionStatus={connectionStatus}
                 onPlayCard={handlePlayCard}

@@ -1,7 +1,8 @@
 import UnoCard from "./IUnoCard";
+import IUser from "./IUser";
 
 export default interface UnoPlayer {
-    user: string;
+    user: IUser;
     hand: UnoCard[] | int;
     score?: number;
     player_number: string;

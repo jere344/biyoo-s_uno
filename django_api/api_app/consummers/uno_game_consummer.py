@@ -110,11 +110,11 @@ class UnoGameConsummer(JsonWebsocketConsumer):
 
         game_dict = game_service.game.to_dict()
         for player in game_dict["players"]:
-            if player["user"] != self.user.username:
+            if player["user"]["username"] != self.user.username:
                 player["hand"] = len(player["hand"])
             else: # if it's the current player, show which card he can play
                 for card in player["hand"]:
-                    card["can_play"] = game_service.current_player_can_place(card)
+                    card["can_play"] = game_service.can_place(game_service.get_player(self.user), card)
         game_dict["pile"] = len(game_dict["pile"])
         
         self.send_json({
@@ -201,10 +201,8 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         game_service = uno_game_service.UnoGameService(game)
 
         game_rules = uno_game_service.UnoGameRules()
-        # game_rules.players = list(self.room.users.all())
-        # instead we take the connected users
         game_rules.players = [get_user_model().objects.get(id=user_id) for user_id in self.connected_users[self.room_id]]
-        game_rules.starting_deck = list(UnoCard.objects.all())
+        game_rules.select_base_deck()
 
         game_service.start_game(game_rules)
         
@@ -212,8 +210,9 @@ class UnoGameConsummer(JsonWebsocketConsumer):
     
     def play_card(self, content):
         card = UnoCard.objects.get(id=content["card_id"])
+        color = content.get("color", None)
         game_service = self.get_game_service()
-        game_service.play_card(self.user, card)
+        game_service.play_card(self.user, card, color)
         
         self._send_game_state()
 

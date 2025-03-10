@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+
 # uno cards are readonly. Each game just link to the correct card and doesn't edit it.
 # the images are already there.
 class UnoCard(models.Model):
     color:str = models.CharField(max_length=100, verbose_name="couleur")
     action:str = models.CharField(max_length=100, verbose_name="action")
     image:str = models.ImageField(upload_to="base_cards", verbose_name="image")
+    is_special = models.BooleanField(verbose_name="carte spéciale", default=False) # cards that are not really playeable
     
     def __str__(self):
         return f"{self.color} {self.action} {self.image}"
@@ -15,12 +18,12 @@ class UnoCard(models.Model):
         verbose_name_plural = "cartes"
         ordering = ['color', 'action']
     
-    def to_dict(self, request=None) -> dict:
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "color": self.color,
             "action": self.action,
-            "image": request.build_absolute_uri(self.image.url) if request else self.image.url
+            "image": f"{settings.MEDIA_FULL_URL}{self.image}"
         }
 
 class UnoPlayer(models.Model):
@@ -39,14 +42,18 @@ class UnoPlayer(models.Model):
         verbose_name_plural = "joueurs"
         ordering = ['user']
     
-    def to_dict(self, request=None) -> dict:
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
-            "user": self.user.username,
+            "user": {
+                "id": self.user.id,
+                "username": self.user.username,
+                "profile_picture": f"{settings.MEDIA_FULL_URL}{self.user.profile_picture}" if self.user.profile_picture else None
+            },
             "player_number": self.player_number,
             "hand": [card.to_dict() for card in self.hand.all()],
             "said_uno": self.said_uno,
-            "card_back" : UnoCard.objects.get(id=1).to_dict(request)
+            "card_back" : UnoCard.objects.get(id=1).to_dict()
         }
         
     
@@ -66,7 +73,7 @@ class UnoGame(models.Model):
         return self.players.get(player_number=self.current_player_number)
     
     
-    def to_dict(self, request=None) -> dict:
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "current_card": self.current_card.to_dict(),
@@ -74,8 +81,9 @@ class UnoGame(models.Model):
             "pile": [card.to_dict() for card in self.pile.all()],
             "game_over": self.game_over,
             "current_player_number": self.current_player_number,
-            "players": [player.to_dict(request) for player in self.players.all()],
-            "card_back" : UnoCard.objects.get(id=1).to_dict(request)
+            "players": [player.to_dict() for player in self.players.all()],
+            "card_back" : UnoCard.objects.get(id=1).to_dict(),
+            "winner": self.winner.to_dict() if self.winner else None
         }
     
     def __str__(self):

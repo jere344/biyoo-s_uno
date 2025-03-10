@@ -8,7 +8,7 @@ export default interface UnoGame {
     current_card: UnoCard;
     pile: UnoCard[] | int;
     direction: string;
-    winner?: string | null;
+    winner?: UnoPlayer;
     card_back: UnoCard;
     game_over?: boolean;
 }
