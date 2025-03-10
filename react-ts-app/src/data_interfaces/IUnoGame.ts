@@ -9,6 +9,6 @@ export default interface UnoGame {
     pile: UnoCard[] | int;
     direction: string;
     winner?: string | null;
-    placeHolder: UnoCard;
+    card_back: UnoCard;
     game_over?: boolean;
 }

@@ -15,6 +15,7 @@ const RoomGuard: React.FC<RoomGuardProps> = ({ children }) => {
     // List of paths that are allowed even if user is in a room
     const allowedPaths = [
       `/room/${currentRoomId}`,
+      '/login',
       '/logout',
       '/user-edit/me',
       '/password-edit/me',
@@ -22,7 +23,7 @@ const RoomGuard: React.FC<RoomGuardProps> = ({ children }) => {
     ];
     
     // Check if current path is not allowed
-    if (currentRoomId && !allowedPaths.some(path => location.pathname === path)) {
+    if (currentRoomId && !allowedPaths.some(path => location.pathname.startsWith(path))) {
       navigate(`/room/${currentRoomId}`);
     }
   }, [currentRoomId, location.pathname, navigate]);

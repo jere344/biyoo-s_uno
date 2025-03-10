@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar, Divider, Chip, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar } from "@mui/material";
 import { UnoGameWebsocketDS } from "../../data_services/websockets/UnoGameWebsocketDS";
 import { useParams } from "react-router-dom";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
-import UnoGameCard from "./UnoGameCard";
-import UnoOpponentsList from "./UnoOpponentsList";
+import UnoGameBoard from "./UnoGameBoard";
 
 export default function UnoGame() {
     const { id } = useParams(); // room id from route params
@@ -17,7 +16,6 @@ export default function UnoGame() {
     );
     const [error, setError] = useState<string | null>(null);
     const [currentUser, setCurrentUser] = useState<string>("");
-    const [openStopDialog, setOpenStopDialog] = useState<boolean>(false);
 
     // Initialize the game service and connect to WebSocket
     useEffect(() => {
@@ -71,8 +69,8 @@ export default function UnoGame() {
         return gameState.players.find((p) => p.player_number === gameState.current_player_number) || null;
     };
 
-    const handlePlayCard = (cardId: number | undefined) => {
-        if (cardId !== undefined && gameService) {
+    const handlePlayCard = (cardId: number) => {
+        if (gameService) {
             gameService.playCard(cardId);
         }
     };
@@ -98,56 +96,7 @@ export default function UnoGame() {
     const handleStopGame = () => {
         if (gameService) {
             gameService.stopGame();
-            setOpenStopDialog(false);
         }
-    };
-
-    // Render game status section
-    const renderGameStatus = () => {
-        if (!gameState) return null;
-
-        return (
-            <Box sx={{ mb: 3, textAlign: "center" }}>
-                {gameState.game_over == true && (
-                    <Alert 
-                        severity="info" 
-                        action={
-                            <Button 
-                                color="primary" 
-                                size="small" 
-                                variant="contained"
-                                onClick={handleRestartGame}
-                            >
-                                Redémarrer
-                            </Button>
-                        }
-                    >
-                        Fin de la partie! Victoire: {gameState.winner || "Nobody"}
-                    </Alert>
-                )}
-
-                {gameState.game_over == false  && (
-                    <Box>
-                        <Typography variant="h6">
-                            Tour: {currentPlayer?.user}
-                            {currentPlayer?.hand === 1 && <span style={{ color: "red" }}> UNO!</span>}
-                        </Typography>
-                        <Typography variant="body2">
-                            Direction: {gameState.direction === true ? "→" : "←"}
-                        </Typography>
-                        <Button 
-                            color="error" 
-                            size="small" 
-                            variant="outlined"
-                            onClick={() => setOpenStopDialog(true)}
-                            sx={{ mt: 1 }}
-                        >
-                            Arrêter la partie
-                        </Button>
-                    </Box>
-                )}
-            </Box>
-        );
     };
 
     // Main render method
@@ -216,19 +165,6 @@ export default function UnoGame() {
                 backgroundColor: "#f1f8e9",
             }}
         >
-            {/* Game header */}
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    UNO
-                </Typography>
-                <Chip label={`Room #${roomId}`} variant="outlined" size="small" sx={{ mr: 1 }} />
-                <Chip
-                    label={connectionStatus}
-                    color={connectionStatus === "connected" ? "success" : "error"}
-                    size="small"
-                />
-            </Box>
-
             {/* Error message */}
             <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
                 <Alert severity="error" onClose={() => setError(null)}>
@@ -236,90 +172,20 @@ export default function UnoGame() {
                 </Alert>
             </Snackbar>
 
-            {/* Game status section */}
-            {renderGameStatus()}
-
-            {/* Other players section */}
-            {gameState && <UnoOpponentsList gameState={gameState} currentUser={currentUser} />}
-
-            {/* Game board section */}
-            <Box sx={{ mb: 3, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Box sx={{ position: "relative", width: "250px", height: "200px" }}>
-                    {/* current card */}
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                        }}
-                    >
-                        {gameState.current_card && (
-                            <UnoGameCard card={gameState.current_card} size="large" />
-                        )}
-                    </Box>
-
-                    {/* Draw pile */}
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "10%",
-                            transform: "translate(-50%, -50%)",
-                        }}
-                    >
-                       
-                        <UnoGameCard card={gameState.placeholder} isPlayable={isMyTurn} modifier={isMyTurn ? "highlight" : "default"} onClick={handleDrawCard} />
-                        <Typography variant="caption" sx={{ display: "block", textAlign: "center", mt: 1 }}>
-                            Pioche
-                        </Typography>
-                    </Box>
-                </Box>
-            </Box>
-
-            {/* Player's hand section */}
-            <Box sx={{ mt: 4 }}>
-                <Divider sx={{ mb: 2 }}>
-                    <Chip label="Votre Main" />
-                </Divider>
-
-                <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-                    {myPlayer?.hand.length > 0 ? (
-                        myPlayer.hand.map((card) => 
-                            <UnoGameCard key={card.id} card={card} 
-                                isPlayable={isMyTurn && card.can_play} 
-                                modifier={isMyTurn ? (card.can_play ? "highlight" : "darken") : "default"}
-                                onClick={() => handlePlayCard(card.id)} 
-                            />)
-                    ) : (
-                        <Typography variant="body1" color="textSecondary">
-                            Tu n'as pas de cartes.
-                        </Typography>
-                    )}
-                </Box>
-
-                {isMyTurn && (
-                    <Typography variant="subtitle1" sx={{ textAlign: "center", mt: 2, color: "green" }}>
-                        C'est à toi de jouer! Pose une carte ou pioche dans la pile.
-                    </Typography>
-                )}
-            </Box>
-
-            {/* Stop Game Confirmation Dialog */}
-            <Dialog open={openStopDialog} onClose={() => setOpenStopDialog(false)}>
-                <DialogTitle>Confirmer l'arrêt de la partie</DialogTitle>
-                <DialogContent>
-                    <Typography>
-                        Attention : Cette action arrêtera la partie pour tous les joueurs. Êtes-vous sûr de vouloir continuer ?
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenStopDialog(false)}>Annuler</Button>
-                    <Button onClick={handleStopGame} color="error" variant="contained">
-                        Arrêter la partie
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            {/* Game board component */}
+            <UnoGameBoard
+                gameState={gameState}
+                myPlayer={myPlayer}
+                currentPlayer={currentPlayer}
+                isMyTurn={isMyTurn}
+                currentUser={currentUser}
+                roomId={roomId}
+                connectionStatus={connectionStatus}
+                onPlayCard={handlePlayCard}
+                onDrawCard={handleDrawCard}
+                onRestartGame={handleRestartGame}
+                onStopGame={handleStopGame}
+            />
         </Paper>
     );
 }

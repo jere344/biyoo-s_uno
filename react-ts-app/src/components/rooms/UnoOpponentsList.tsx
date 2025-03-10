@@ -29,7 +29,7 @@ export default function UnoOpponentsList({ gameState, currentUser }: UnoOpponent
                             <Typography variant="subtitle1">{player.user}</Typography>
                             <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
                                 { typeof player.hand === "number" && Array.from({ length: player.hand }).map((_, idx) => (
-                                    <UnoGameCard key={idx} card={player.placeholder} size="small" />
+                                    <UnoGameCard key={idx} card={player.card_back} size="small" />
                                 ))}
                             </Box>
                             <Chip

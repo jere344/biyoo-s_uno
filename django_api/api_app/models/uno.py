@@ -29,6 +29,7 @@ class UnoPlayer(models.Model):
     player_number = models.IntegerField(verbose_name="numéro de joueur", db_index=True)
     said_uno = models.BooleanField(verbose_name="a dit uno", default=False)
     game = models.ForeignKey("UnoGame", on_delete=models.CASCADE, verbose_name="partie", related_name="players")
+    card_back = models.ForeignKey(UnoCard, on_delete=models.CASCADE, verbose_name="dos de carte", related_name="in_game_back", null=True)
     
     def __str__(self):
         return f"{self.user.username}"
@@ -45,8 +46,9 @@ class UnoPlayer(models.Model):
             "player_number": self.player_number,
             "hand": [card.to_dict() for card in self.hand.all()],
             "said_uno": self.said_uno,
-            "placeholder" : UnoCard.objects.get(id=1).to_dict(request)
+            "card_back" : UnoCard.objects.get(id=1).to_dict(request)
         }
+        
     
     
 class UnoGame(models.Model):
@@ -73,7 +75,7 @@ class UnoGame(models.Model):
             "game_over": self.game_over,
             "current_player_number": self.current_player_number,
             "players": [player.to_dict(request) for player in self.players.all()],
-            "placeholder" : UnoCard.objects.get(id=1).to_dict(request)
+            "card_back" : UnoCard.objects.get(id=1).to_dict(request)
         }
     
     def __str__(self):
