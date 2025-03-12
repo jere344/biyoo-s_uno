@@ -1,22 +1,16 @@
 import React, { useEffect } from "react";
 import { useThree, useLoader } from "@react-three/fiber";
-import { TextureLoader, RepeatWrapping } from "three";
+import { TextureLoader } from "three";
 import { Color } from "three";
 import woodTexture from "@assets/img/seemless_wood.webp";
-import grassTexture from "@assets/img/grass_texture.jpg";
+import GrassField from "./GrassField";
 
 const GameEnvironment: React.FC = () => {
     const { camera, scene } = useThree();
     
-    // Load the grass texture with repeat settings
-    const grassTextureMap = useLoader(TextureLoader, grassTexture);
-    grassTextureMap.wrapS = RepeatWrapping;
-    grassTextureMap.wrapT = RepeatWrapping;
-    grassTextureMap.repeat.set(100, 100);
     
     // Use effect to setup camera and scene once
     useEffect(() => {
-        console.log("GameEnvironment rendered");
         camera.position.set(0, 5, 7);
         camera.lookAt(0, 0, 0);
         camera.far = 200;
@@ -49,11 +43,15 @@ const GameEnvironment: React.FC = () => {
                 </meshStandardMaterial>
             </mesh>
 
-            {/* Grass ground */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]} receiveShadow>
-                <planeGeometry args={[600, 600]} />
-                <meshStandardMaterial map={grassTextureMap} />
-            </mesh>
+            {/* Grass */}
+            <GrassField
+                planePosition={[0, -3, 0]}
+                planeSize={30}
+                bladeCount={100000}
+                bladeWidth={0.1}
+                bladeHeight={0.8}
+                bladeHeightVariation={0.6}
+             />
         </>
     );
 };

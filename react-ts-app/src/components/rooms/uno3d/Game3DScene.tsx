@@ -1,5 +1,5 @@
 import React from "react";
-import { OrbitControls, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
 import UnoCard3D from "./UnoCard3D";
@@ -50,14 +50,6 @@ const Game3DScene: React.FC<Game3DSceneProps> = ({ gameState, myPlayer, isMyTurn
             <Text position={[0, 0.5, -2]} color="white" fontSize={1.5} outlineWidth={0.05} outlineColor="black">
                 {gameState.direction === true ? "→" : "←"}
             </Text>
-
-            <OrbitControls
-                enableZoom={true}
-                minDistance={3}
-                maxDistance={12}
-                minPolarAngle={Math.PI / 6}
-                maxPolarAngle={Math.PI / 2}
-            />
         </>
     );
 };
