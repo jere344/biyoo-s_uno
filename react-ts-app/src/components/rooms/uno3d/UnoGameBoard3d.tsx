@@ -16,7 +16,6 @@ import Game3DScene from "./Game3DScene";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
 
-import GameEnvironment from "./GameEnvironment";
 import { OrbitControls } from "@react-three/drei";
 
 export interface UnoGameBoard3dProps {
@@ -132,7 +131,6 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                         onPlayCard={onPlayCard}
                         onDrawCard={onDrawCard}
                     />
-                    {/* <GameEnvironment/> */}
                     <OrbitControls
                         enableZoom={true}
                         minDistance={3}

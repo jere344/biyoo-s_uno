@@ -174,10 +174,10 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
                 />
             </mesh>
 
-            {/* a simple brown circe bellow the grass */}
+            {/* a simple green circe bellow the grass */}
             <mesh position={planePosition} rotation={[-Math.PI / 2, 0, 0]}>
                 <circleGeometry args={[planeSize / 2, 32]} />
-                <meshBasicMaterial color={0x54321b} />
+                <meshBasicMaterial color="green" />
             </mesh>
         </>
     );
