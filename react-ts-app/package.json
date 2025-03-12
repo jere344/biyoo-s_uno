@@ -21,6 +21,7 @@
     "@react-three/fiber": "^9.1.0",
     "@types/three": "^0.174.0",
     "axios": "^1.8.1",
+    "deep-diff": "^1.0.2",
     "notistack": "^3.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

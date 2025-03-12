@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import "./assets/css/main.css";
@@ -19,7 +19,7 @@ import RoomGuard from "./components/RoomGuard";
 import Home from "./components/Home";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  // <StrictMode>
     <BrowserRouter>
       <RoomProvider>
         <RoomGuard>
@@ -45,5 +45,5 @@ createRoot(document.getElementById("root")!).render(
         </RoomGuard>
       </RoomProvider>
     </BrowserRouter>
-  </StrictMode>
+  // </StrictMode>
 );

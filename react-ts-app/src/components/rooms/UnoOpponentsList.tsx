@@ -4,11 +4,11 @@ import UnoGameCard from "./UnoGameCard";
 
 interface UnoOpponentsListProps {
     gameState: UnoGame;
-    myUserName: string;
+    myPlayer: UnoPlayer;
 }
 
-export default function UnoOpponentsList({ gameState, myUserName }: UnoOpponentsListProps) {
-    const opponents = gameState.players.filter((p) => p.user.username !== myUserName);
+export default function UnoOpponentsList({ gameState, myPlayer }: UnoOpponentsListProps) {
+    const opponents = gameState.players.filter((p) => p !== myPlayer);
 
     return (
         <Box sx={{ mb: 3 }}>

@@ -21,7 +21,6 @@ interface UnoGameBoardProps {
     myPlayer: IUnoPlayer | null;
     currentPlayer: IUnoPlayer | null;
     isMyTurn: boolean;
-    myUserName: string;
     roomId: number;
     connectionStatus: "connected" | "disconnected" | "connecting";
     onPlayCard: (cardId: number) => void;
@@ -35,7 +34,6 @@ const UnoGameBoard: React.FC<UnoGameBoardProps> = ({
     myPlayer,
     currentPlayer,
     isMyTurn,
-    myUserName,
     roomId,
     connectionStatus,
     onPlayCard,
@@ -113,7 +111,7 @@ const UnoGameBoard: React.FC<UnoGameBoardProps> = ({
             {renderGameStatus()}
 
             {/* Other players section */}
-            <UnoOpponentsList gameState={gameState} myUserName={myUserName} />
+            <UnoOpponentsList gameState={gameState} myPlayer={myPlayer} />
 
             {/* Game board section */}
             <Box sx={{ mb: 3, display: "flex", justifyContent: "center", alignItems: "center" }}>

@@ -3,7 +3,7 @@ import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar, Dial
 import { UnoGameWebsocketDS } from "../../data_services/websockets/UnoGameWebsocketDS";
 import { useParams } from "react-router-dom";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
-// import UnoGameBoard from "./UnoGameBoard";
+import UnoGameBoard from "./UnoGameBoard";
 import UnoGameBoard3d from "./uno3d/UnoGameBoard3d";
 
 export default function UnoGame() {
@@ -25,7 +25,6 @@ export default function UnoGame() {
     // Add a new state to track if we're ready to connect
     const [isReadyToConnect, setIsReadyToConnect] = useState(false);
 
-    // Split the initialization into two effects
     useEffect(() => {
         const token = localStorage.getItem(storageAccessTokenKey);
         const username = localStorage.getItem(storageUsernameKey);
@@ -256,7 +255,6 @@ export default function UnoGame() {
             {/* Game board component */}
             <UnoGameBoard3d
                 gameState={gameState}
-                myUserName={myUserName}
                 myPlayer={myPlayer}
                 currentPlayer={currentPlayer}
                 isMyTurn={isMyTurn}
@@ -267,6 +265,19 @@ export default function UnoGame() {
                 onRestartGame={handleRestartGame}
                 onStopGame={handleStopGame}
             />
+
+            {/* <UnoGameBoard
+                gameState={gameState}
+                myPlayer={myPlayer}
+                currentPlayer={currentPlayer}
+                isMyTurn={isMyTurn}
+                roomId={roomId}
+                connectionStatus={connectionStatus}
+                onPlayCard={handlePlayCard}
+                onDrawCard={handleDrawCard}
+                onRestartGame={handleRestartGame}
+                onStopGame={handleStopGame}
+            /> */}
         </Paper>
     );
 }
