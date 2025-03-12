@@ -99,7 +99,7 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
     return (
         <Box>
             {/* Game header */}
-            {/* <Box sx={{ mb: 3 }}>
+            <Box sx={{ mb: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     UNO 3D
                 </Typography>
@@ -109,10 +109,10 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                     color={connectionStatus === "connected" ? "success" : "error"}
                     size="small"
                 />
-            </Box> */}
+            </Box>
 
             {/* Game status section */}
-            {/* {renderGameStatus()} */}
+            {renderGameStatus()}
 
             {/* 3D Game Canvas */}
             <Box
@@ -125,14 +125,14 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                 }}
             >
                 <Canvas shadows dpr={[1, 2]}>
-                    {/* <Game3DScene
+                    <Game3DScene
                         gameState={gameState}
                         myPlayer={myPlayer}
                         isMyTurn={isMyTurn}
                         onPlayCard={onPlayCard}
                         onDrawCard={onDrawCard}
-                    /> */}
-                    <GameEnvironment/>
+                    />
+                    {/* <GameEnvironment/> */}
                     <OrbitControls
                         enableZoom={true}
                         minDistance={3}
@@ -144,14 +144,14 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
             </Box>
 
             {/* Game instructions */}
-            {/* {isMyTurn && (
+            {isMyTurn && (
                 <Typography variant="subtitle1" sx={{ textAlign: "center", mt: 2, color: "green" }}>
                     C'est à toi de jouer! Pose une carte ou pioche dans la pile.
                 </Typography>
-            )} */}
+            )}
 
             {/* Stop Game Confirmation Dialog */}
-            {/* <Dialog open={openStopDialog} onClose={() => setOpenStopDialog(false)}>
+            <Dialog open={openStopDialog} onClose={() => setOpenStopDialog(false)}>
                 <DialogTitle>Confirmer l'arrêt de la partie</DialogTitle>
                 <DialogContent>
                     <Typography>
@@ -172,7 +172,7 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                         Arrêter la partie
                     </Button>
                 </DialogActions>
-            </Dialog> */}
+            </Dialog>
         </Box>
     );
 };

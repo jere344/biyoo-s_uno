@@ -155,6 +155,7 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
         () => ({
             textures: { value: [grassTexture, cloudTexture] },
             iTime: { value: 0.0 },
+            // ...THREE.UniformsLib.lights
         }),
         [grassTexture, cloudTexture]
     );
@@ -169,6 +170,7 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
                     fragmentShader={grassShader.frag}
                     vertexColors={true}
                     side={THREE.DoubleSide}
+                    // lights={true}
                 />
             </mesh>
 
