@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Text } from "@react-three/drei";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
@@ -17,15 +17,25 @@ interface Game3DSceneProps {
 }
 
 const Game3DScene: React.FC<Game3DSceneProps> = ({ gameState, myPlayer, isMyTurn, onPlayCard, onDrawCard }) => {
+    const [delayedCurrentCard, setDelayedCurrentCard] = useState(gameState.current_card);
+    
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setDelayedCurrentCard(gameState.current_card);
+        }, 5000);
+
+        return () => clearTimeout(timeoutId);
+    }, [gameState.current_card]);
+
     return (
         <>
             {/* Environment component handles lights, table, grass, etc. */}
             <GameEnvironment />
 
-            {/* Current card in play */}
-            {gameState.current_card && (
+            {/* Current card in play - uses the delayed state */}
+            {delayedCurrentCard && (
                 <UnoCard3D
-                    card={gameState.current_card}
+                    card={delayedCurrentCard}
                     position={[0, 0, 0]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     scale={[1.5, 1.5, 0.1]}

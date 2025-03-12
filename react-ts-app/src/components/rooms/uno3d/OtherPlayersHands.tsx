@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Text } from "@react-three/drei";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
@@ -10,10 +10,33 @@ interface OtherPlayersHandsProps {
 }
 
 const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlayer }) => {
-    if (!gameState.players || !myPlayer) return null;
-
+    
     const tableRadius = 4; // Distance from center of table
     const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer.id);
+    
+    const [animatingPlayerId, setAnimatingPlayerId] = useState<number | null>(null);
+    const [animatingCard, setAnimatingCard] = useState<IUnoCard | null>(null);
+    const previousHandsRef = useRef<{ [key: number]: number }>({});
+
+    const handleAnimationComplete = useCallback(() => {
+        if (animatingPlayerId !== null) {
+            setAnimatingPlayerId(null);
+            setAnimatingCard(null);
+        }
+    }, [animatingPlayerId]);
+
+    useEffect(() => {
+        gameState.players.forEach((player) => {
+            if (previousHandsRef.current[player.id] > player.hand) {
+                setAnimatingPlayerId(player.id);
+                setAnimatingCard(gameState.current_card);
+            }
+            previousHandsRef.current[player.id] = player.hand;
+        });
+    }, [gameState.players, gameState.players.map(player => player.hand).join()]);
+
+    if (!gameState.players || !myPlayer) return null;
+    
 
     // Calculate positions around the table
     return (
@@ -54,6 +77,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                 const cardWidth = 0.7; // Smaller than player's cards
                 const cardsPerRow = Math.min(7, player.hand);
 
+                
                 const cards = Array.from({ length: player.hand }).map((_, cardIndex) => {
                     const row = Math.floor(cardIndex / cardsPerRow);
                     const col = cardIndex % cardsPerRow;
@@ -87,6 +111,29 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                         />
                     );
                 });
+
+                if (player.id === animatingPlayerId && animatingCard) {
+                    console.log(rotationY)
+                    cards.push(
+                        <UnoCard3D
+                            key={`card-${player.id}-animating`}
+                            card={animatingCard}
+                            cardBack={player.card_back}
+                            position={[0, 0.1, 0]}
+                            rotation={[-Math.PI / 2, rotationY, 0]}
+                            scale={[1.5, 1.5, 0.1]}
+                            originalPosition={[
+                                x + (player.hand % cardsPerRow) * cardWidth * Math.cos(rotationY),
+                                0.7 - 0.1 * Math.floor(player.hand / cardsPerRow),
+                                z + (player.hand % cardsPerRow) * cardWidth * Math.sin(rotationY) + 0.3 * Math.floor(player.hand / cardsPerRow) * Math.cos(rotationY),
+                            ]}
+                            originalRotation={[0, rotationY + Math.PI, 0]}
+                            originalScale={[0.7, 0.7, 0.1]}
+                            animationDuration={0.3}
+                            onAnimationComplete={handleAnimationComplete}
+                        />
+                    );
+                }
 
                 return (
                     <React.Fragment key={`player-${player.id}`}>
