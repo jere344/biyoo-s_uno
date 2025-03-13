@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User, update_last_login
+from auth_app.models import CustomUser as User
+from django.contrib.auth.models import update_last_login
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings

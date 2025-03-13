@@ -2,8 +2,6 @@ from django.contrib import admin
 
 from .models import UnoCard, Room
 
-admin.site.register(UnoCard)
-
 #list connected players in the room
 class RoomAdmin(admin.ModelAdmin):
     list_display = ['name', 'created_at', 'player_limit', 'is_open', 'get_users']
@@ -18,3 +16,19 @@ class RoomAdmin(admin.ModelAdmin):
 
 admin.site.register(Room, RoomAdmin)
 
+
+class UnoCardAdmin(admin.ModelAdmin):
+    list_display = ['color', 'action', 'is_special', 'image_tag']
+    list_filter = ['color', 'action', 'is_special']
+    search_fields = ['color', 'action']
+    readonly_fields = ['image']
+
+    def image_tag(self, obj):
+        from django.utils.html import mark_safe
+        return mark_safe(f'<img src="{obj.image.url}" width="60" height="100" />')
+
+
+
+admin.site.register(UnoCard, UnoCardAdmin)
+
+    

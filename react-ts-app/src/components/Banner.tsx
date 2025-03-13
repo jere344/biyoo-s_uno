@@ -10,9 +10,11 @@ import {
   Typography,
 } from "@mui/material";
 import BannerUserMenu from "./BannerUserMenu";
+import { useRoom } from "../contexts/RoomContext";
 
 function Banner() {
   const navigate: NavigateFunction = useNavigate();
+  const { currentRoomId } = useRoom();
 
   const handleCartClick = () => {
     navigate("/cart/");
@@ -23,7 +25,11 @@ function Banner() {
   };
 
   const handleHomeClick = () => {
-    navigate("/");
+    if (currentRoomId) {
+      navigate(`/room/${currentRoomId}`);
+    } else {
+      navigate("/");
+    }
   };
 
   const handleLoginClick = () => {

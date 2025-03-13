@@ -166,8 +166,7 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             )
     
     def stop_game(self, content):
-        self.room = self.room
-        UnoGame.objects.filter(room=self.room).first().delete() # first is just safety, there should be only one game
+        UnoGame.objects.filter(room=self.room).first().delete() 
 
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
@@ -179,8 +178,7 @@ class UnoGameConsummer(JsonWebsocketConsumer):
 
         
     def restart_game(self, content):
-        self.room = self.room
-        UnoGame.objects.filter(room=self.room).first().delete() # first is just safety, there should be only one game
+        UnoGame.objects.filter(room=self.room).first().delete() 
         self.start_game(content)
 
     def start_game(self, content):

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from auth_app.models import CustomUser as User
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response

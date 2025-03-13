@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.conf import settings
 
 # uno cards are readonly. Each game just link to the correct card and doesn't edit it.

@@ -1,7 +1,6 @@
 import datetime
-from django.contrib.auth.models import User
+from auth_app.models import CustomUser
 from django.db import models
-from django.db.models import QuerySet
 from django.conf import settings
 
 
@@ -44,7 +43,7 @@ class Room(models.Model):
         self.player_limit = data.get("player_limit", self.player_limit)
         self.is_open = data.get("is_open", self.is_open)
     
-    def add_user(self, user:User) -> None:
+    def add_user(self, user:CustomUser) -> None:
         """
         Add a user to the room
         """
@@ -55,7 +54,7 @@ class Room(models.Model):
         user.room = self
         user.save()
     
-    def remove_user(self, user:User) -> None:
+    def remove_user(self, user:CustomUser) -> None:
         """
         Remove a user from the room
         """
@@ -65,7 +64,7 @@ class Room(models.Model):
 
 class Message(models.Model):
     room:Room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="salle")
-    sender:User = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="expéditeur")
+    sender:CustomUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="expéditeur")
     content:str = models.TextField(verbose_name="contenu")
     created_at:datetime = models.DateTimeField(auto_now_add=True, verbose_name="créé le")
 
