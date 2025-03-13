@@ -80,8 +80,12 @@ class ChatViewSet(ModelViewSet):
         return Response(message.to_dict(), status=status.HTTP_201_CREATED)
     
     def list(self, request, pk):
-        if request.user not in Room.objects.get(pk=pk).users.all():
-            return Response({"error": "You are not in this room"}, status=status.HTTP_403_FORBIDDEN)
+        try :
+            if request.user not in Room.objects.get(pk=pk).users.all():
+                return Response({"error": "You are not in this room"}, status=status.HTTP_403_FORBIDDEN)
+        except Room.DoesNotExist:
+            return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         messages = Message.objects.filter(room=Room.objects.get(pk=pk))
         return Response([message.to_dict() for message in messages], status=status.HTTP_200_OK)
     

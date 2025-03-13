@@ -1,6 +1,18 @@
-import { createTheme } from "@mui/material";
+import { PaletteMode } from "@mui/material";
 
-const theme = createTheme({
+const getDesignTokens = (mode: PaletteMode) => ({
+    
+
+    palette: {
+        mode,
+        ...(mode === 'light'
+            ? {
+                // light mode palette
+            }
+            : {
+                // dark mode palette
+            }),
+    },
     typography: {
         fontFamily: "Games-XvD2, sans-serif",
         fontSize: 18,
@@ -29,4 +41,4 @@ const theme = createTheme({
     },
 });
 
-export default theme;
+export default getDesignTokens;

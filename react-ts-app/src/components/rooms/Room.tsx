@@ -13,8 +13,10 @@ import { useParams } from "react-router-dom";
 import { useRoom } from "../../hooks/useRoom";
 import Chat from "./Chat";
 import UnoGame from "./UnoGame";
+import { useTheme } from '@mui/material/styles';
 
 export default function Room() {
+    const theme = useTheme();
     const { id } = useParams();
     const { leaveRoom } = useRoom();
     const [room, setRoom] = useState<IRoom>({
@@ -38,12 +40,6 @@ export default function Room() {
                 console.error("Error fetching room:", error);
                 navigate("/");
             });
-            
-        // Cleanup when component unmounts
-        return () => {
-            // Don't leave the room when just re-rendering
-            // The leaveRoom will be called explicitly when the user clicks "Leave Room"
-        };
     }, [navigate, id]);
 
     const [editingName, setEditingName] = useState(false);
@@ -105,8 +101,10 @@ export default function Room() {
             <Paper
                 sx={{
                     padding: "1rem",
-                    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
-                    color: "white",
+                    background: theme.palette.mode === 'light' ? 
+                        "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)"
+                        : "linear-gradient(45deg,rgb(74, 4, 64) 20%, #616161 90%)",
+                    color: theme.palette.mode === 'light' ? "white" : "",
                 }}
             >
                 <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -116,7 +114,10 @@ export default function Room() {
                             onChange={handleNameChange}
                             variant="outlined"
                             size="small"
-                            sx={{ backgroundColor: "white", borderRadius: 1 }}
+                            sx={{ 
+                                backgroundColor: theme.palette.mode === "light" ? "#f5f5f5" : "#424242",
+                                borderRadius: 1 
+                            }}
                         />
                     ) : (
                         <Typography variant="h4">{room.name}</Typography>
@@ -157,7 +158,10 @@ export default function Room() {
                             value={room.player_limit}
                             onChange={handlePlayerLimitChange}
                             size="small"
-                            sx={{ backgroundColor: "white", borderRadius: 1 }}
+                            sx={{ 
+                                backgroundColor: theme.palette.mode === "light" ? "#f5f5f5" : "#424242",
+                                borderRadius: 1 
+                            }}
                             InputLabelProps={{ shrink: true }}
                         />
                         <Button
@@ -176,7 +180,10 @@ export default function Room() {
             <Grid container spacing={2} sx={{ marginTop: "1rem" }}>
                 {/* Players List */}
                 <Grid item xs={12}>
-                    <Paper sx={{ padding: "1rem", backgroundColor: "#e0f7fa" }} >
+                    <Paper sx={{ 
+                        padding: "1rem", 
+                        background: theme.palette.mode === 'light' ? "#e0f7fa" : "#000146",
+                    }} >
                         <Box display="flex" flexWrap="wrap" alignItems="center">
                             <Typography variant="h6" sx={{ flexGrow: 1 }}>
                                 Salle ({room.users.length}/{room.player_limit})

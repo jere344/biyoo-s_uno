@@ -6,8 +6,10 @@ import ChatDS from "../../data_services/ChatDS";
 import IMessage from "../../interfaces/IMessage";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
+import { useTheme } from '@mui/material/styles';
 
 export default function Chat() {
+    const theme = useTheme();
     const { id } = useParams(); // room id from route params
     const roomId = parseInt(id as string, 10);
     const [messages, setMessages] = useState<IMessage[]>([]);
@@ -113,7 +115,7 @@ export default function Chat() {
         <Paper
             sx={{
                 padding: "1rem",
-                backgroundColor: "#fff9c4",
+                backgroundColor: theme.palette.mode === 'light' ? "#fff9c4" : "#361701",
                 minHeight: "800px",
                 maxHeight: "800px",
                 display: "flex",

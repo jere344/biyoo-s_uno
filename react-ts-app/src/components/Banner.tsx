@@ -1,15 +1,21 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { storageAccessTokenKey } from "../data_services/CustomAxios";
-import { AppBar, Container, Link, Toolbar, Typography, Box } from "@mui/material";
+import { AppBar, Container, Link, Toolbar, Typography, Box, IconButton } from "@mui/material";
+import { Brightness4, Brightness7 } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
+import { ColorModeContext } from "./App";
 import BannerUserMenu from "./BannerUserMenu";
 import { useRoom } from "../hooks/useRoom";
 import { useUser } from "../hooks/useUser";
 import cardsCurrencyIcon from "@assets/img/cards_currency.png";
+import React from "react";
 
 function Banner() {
     const navigate: NavigateFunction = useNavigate();
     const { currentRoomId } = useRoom();
     const { user } = useUser();
+    const theme = useTheme();
+    const colorMode = React.useContext(ColorModeContext);
 
     return (
         <AppBar position="fixed">
@@ -64,6 +70,9 @@ function Banner() {
                             Se connecter
                         </Link>
                     )}
+                    <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
+                        {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                    </IconButton>
                 </Toolbar>
             </Container>
         </AppBar>
