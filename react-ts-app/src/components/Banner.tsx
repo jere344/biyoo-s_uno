@@ -1,9 +1,10 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { storageAccessTokenKey } from "../data_services/CustomAxios";
-import { AppBar, Container, Link, Toolbar, Typography } from "@mui/material";
+import { AppBar, Container, Link, Toolbar, Typography, Box } from "@mui/material";
 import BannerUserMenu from "./BannerUserMenu";
 import { useRoom } from "../hooks/useRoom";
 import { useUser } from "../contexts/UserContext";
+import cardsCurrencyIcon from "@assets/img/cards_currency.png";
 
 function Banner() {
     const navigate: NavigateFunction = useNavigate();
@@ -37,9 +38,21 @@ function Banner() {
                     {/* user menu */}
                     {localStorage.getItem(storageAccessTokenKey) ? (
                         <>
-							<Typography variant="h6" sx={{ flexGrow: 1, marginRight: "1rem" }} align="right">
-								{user?.username}
-							</Typography>
+							<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1, justifyContent: "flex-end", marginRight: "1rem" }}>
+                                <Typography variant="h6" sx={{ marginRight: "1rem" }}>
+                                    {user?.username}
+                                </Typography>
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                    <img 
+                                        src={cardsCurrencyIcon} 
+                                        alt="Cards Currency" 
+                                        style={{ height: "24px", marginRight: "4px" }} 
+                                    />
+                                    <Typography variant="subtitle1">
+                                        {user?.cards_currency || 0}
+                                    </Typography>
+                                </Box>
+                            </Box>
                             <BannerUserMenu />
                         </>
                     ) : (

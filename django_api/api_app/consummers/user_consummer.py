@@ -19,7 +19,6 @@ class UserConsumer(AsyncWebsocketConsumer):
                 # Validate token and get user
                 access_token = AccessToken(token)
                 user_id = access_token["user_id"]
-                # self.user = User.objects.get(id=user_id)
                 self.user = await database_sync_to_async(User.objects.get)(id=user_id)
                 self.scope["user"] = self.user
             except Exception as e:
@@ -60,6 +59,10 @@ class UserConsumer(AsyncWebsocketConsumer):
             'data': user_data
         }))
 
+        # set user online
+        self.user.is_online = True
+        await database_sync_to_async(self.user.save)()
+
     
     async def disconnect(self, close_code):
         if hasattr(self, "user_group_name"):
@@ -67,6 +70,9 @@ class UserConsumer(AsyncWebsocketConsumer):
                 self.user_group_name,
                 self.channel_name
             )
+        if hasattr(self, "user"):
+            self.user.is_online = False
+            await database_sync_to_async(self.user.save)()
     
     async def receive(self, text_data):
         # Handle any client-to-server communication if needed

@@ -7,8 +7,10 @@ interface User {
     username: string;
     profilePicture: string | null;
     roomId: number | null;
-    // Future fields will be added here
-    // currency?: number;
+    is_online: boolean;
+    cards_currency: number;
+    game_played: number;
+    game_won: number;
 }
 
 interface UserContextType {
@@ -64,6 +66,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                         username: userData.username,
                         profilePicture: userData.profile_picture,
                         roomId: userData.room_id,
+                        is_online: userData.is_online,
+                        cards_currency: userData.cards_currency,
+                        game_played: userData.game_played,
+                        game_won: userData.game_won,
                         // Add more fields as they're added to the model
                     });
                 }
