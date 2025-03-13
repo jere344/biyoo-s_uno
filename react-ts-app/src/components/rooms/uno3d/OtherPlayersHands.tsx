@@ -3,6 +3,19 @@ import { Text } from "@react-three/drei";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
 import UnoCard3D from "./UnoCard3D";
+import { useLoader } from "@react-three/fiber";
+import { TextureLoader } from "three";
+
+// Profile Picture Component
+const ProfilePicture = ({ imageUrl, position, rotation }) => {
+    const texture = useLoader(TextureLoader, imageUrl);
+    return (
+        <mesh position={position} rotation={rotation}>
+            <circleGeometry args={[0.4, 32]} />
+            <meshBasicMaterial map={texture} />
+        </mesh>
+    );
+};
 
 interface OtherPlayersHandsProps {
     gameState: IUnoGame;
@@ -16,6 +29,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
     
     const [animatingPlayerId, setAnimatingPlayerId] = useState<number | null>(null);
     const [animatingCard, setAnimatingCard] = useState<IUnoCard | null>(null);
+    const [drawingPlayerId, setDrawingPlayerId] = useState<number | null>(null);
     const previousHandsRef = useRef<{ [key: number]: number }>({});
 
     const handleAnimationComplete = useCallback(() => {
@@ -25,10 +39,20 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
         }
     }, [animatingPlayerId]);
 
+    const handleDrawingAnimationComplete = useCallback(() => {
+        if (drawingPlayerId !== null) {
+            setDrawingPlayerId(null);
+            setAnimatingCard(null);
+        }
+    }, [drawingPlayerId]);
+
     useEffect(() => {
         gameState.players.forEach((player) => {
             if (previousHandsRef.current[player.id] > player.hand) {
                 setAnimatingPlayerId(player.id);
+                setAnimatingCard(gameState.current_card);
+            } else if (previousHandsRef.current[player.id] < player.hand) {
+                setDrawingPlayerId(player.id);
                 setAnimatingCard(gameState.current_card);
             }
             previousHandsRef.current[player.id] = player.hand;
@@ -72,6 +96,16 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                         {player.name} ({player.hand} cards)
                     </Text>
                 );
+                
+                // Add player profile picture
+                const profilePictureElement = player.user?.profile_picture ? (
+                    <ProfilePicture 
+                        key={`profile-${player.id}`}
+                        imageUrl={player.user.profile_picture}
+                        position={[x - 1.6, 1.8, z]}
+                        rotation={[0, rotationY, 0]}
+                    />
+                ) : null;
 
                 // Render the player's cards
                 const cardWidth = 0.7; // Smaller than player's cards
@@ -135,9 +169,32 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                     );
                 }
 
+                if (player.id === drawingPlayerId && animatingCard) {
+                    cards.push(
+                        <UnoCard3D
+                            key={`card-${player.id}-drawing`}
+                            card={animatingCard}
+                            cardBack={player.card_back}
+                            position={[
+                                x,
+                                0.7,
+                                z,
+                            ]}
+                            rotation={[0, rotationY + Math.PI, 0]}
+                            scale={[0.7, 0.7, 0.1]}
+                            originalPosition={[-2.5, 0, 1]}
+                            originalRotation={[-Math.PI / 2, 0, 0]}
+                            originalScale={[1, 1.5, 0.01]}
+                            animationDuration={0.3}
+                            onAnimationComplete={handleDrawingAnimationComplete}
+                        />
+                    );
+                }
+
                 return (
                     <React.Fragment key={`player-${player.id}`}>
                         {nameElement}
+                        {profilePictureElement}
                         {cards}
                     </React.Fragment>
                 );
