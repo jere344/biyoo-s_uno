@@ -10,11 +10,7 @@ class Room(models.Model):
     created_at:datetime = models.DateTimeField(auto_now_add=True, verbose_name="créé le")
     player_limit:int = models.IntegerField(default=8, verbose_name="limite de joueurs")
     is_open:bool = models.BooleanField(default=True, verbose_name="ouverte")
-
-    @property
-    def users(self) -> QuerySet:
-        return User.objects.filter(room=self)
-
+    
     def __str__(self):
         return f"{self.name}"
     
