@@ -19,7 +19,7 @@ class Room(models.Model):
         ordering = ['name']
     
     def to_dict(self) -> dict:
-        if not self:
+        if not self.id:
             return {}
         return {
             "id": self.id,

@@ -3,7 +3,7 @@ import { storageAccessTokenKey } from "../data_services/CustomAxios";
 import { AppBar, Container, Link, Toolbar, Typography, Box } from "@mui/material";
 import BannerUserMenu from "./BannerUserMenu";
 import { useRoom } from "../hooks/useRoom";
-import { useUser } from "../contexts/UserContext";
+import { useUser } from "../hooks/useUser";
 import cardsCurrencyIcon from "@assets/img/cards_currency.png";
 
 function Banner() {

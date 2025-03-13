@@ -19,7 +19,7 @@ export default function RoomList() {
 
   useEffect(() => {
     fetchRooms();
-    const interval = setInterval(fetchRooms, 5000000); // Refresh every 10 seconds
+    const interval = setInterval(fetchRooms, 10000); // Refresh every 10 seconds
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 

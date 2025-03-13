@@ -1,5 +1,11 @@
 import { createContext } from 'react';
-import { IRoomContextType } from '../data_interfaces/IRoomContextType';
 
-// Export the context so it can be imported elsewhere
+export interface IRoomContextType {
+    currentRoomId: string | null;
+    setCurrentRoomId: (roomId: string | null) => void;
+    joinRoom: (roomId: string) => void;
+    leaveRoom: () => void;
+  }
+  
+
 export const RoomContext = createContext<IRoomContextType | undefined>(undefined);

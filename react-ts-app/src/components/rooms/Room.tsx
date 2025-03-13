@@ -11,7 +11,7 @@ import RoomDS from "../../data_services/RoomDS";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useRoom } from "../../hooks/useRoom";
-// import Chat from "./Chat";
+import Chat from "./Chat";
 import UnoGame from "./UnoGame";
 
 export default function Room() {
@@ -200,7 +200,7 @@ export default function Room() {
 
                 {/* Right: Chat Area */}
                 <Grid item xs={12} md={4}>
-                    {/* <Chat /> */}
+                    <Chat />
                 </Grid>
             </Grid>
         </Container>
