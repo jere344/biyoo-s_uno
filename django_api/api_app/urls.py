@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from api_app.consummers import chat_consummer, uno_game_consummer  # added import for uno game consummer
+from api_app.consummers import chat_consummer, uno_game_consummer, user_consummer  # added import for user consumer
 
 
 router = DefaultRouter()
@@ -28,5 +28,6 @@ urlpatterns = [
 
 websocket_urlpatterns = [
   path("ws/rooms/<int:pk>/chat/", chat_consummer.ChatConsumer.as_asgi()),
-  path("ws/rooms/<int:pk>/uno/", uno_game_consummer.UnoGameConsummer.as_asgi())
+  path("ws/rooms/<int:pk>/uno/", uno_game_consummer.UnoGameConsummer.as_asgi()),
+  path("ws/user/", user_consummer.UserConsumer.as_asgi())  # Add path for user updates
 ]

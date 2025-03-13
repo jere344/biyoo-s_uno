@@ -15,32 +15,35 @@ import UserDeleteView from "./components/user/UserDeleteView";
 import CreateRoomView from "./components/rooms/CreateRoomView";
 import Room from "./components/rooms/Room";
 import { RoomProvider } from "./contexts/RoomContext";
+import { UserProvider } from "./contexts/UserContext";
 import Home from "./components/Home";
 
 createRoot(document.getElementById("root")!).render(
     // <StrictMode>
     <BrowserRouter>
-        <RoomProvider>
-            <Routes>
-                <Route path="/" element={<App />}>
-                    <Route path="" element={<Home />} />
-                    <Route path="create-room" element={<CreateRoomView />} />
-                    <Route path="room/:id" element={<Room />} />
+        <UserProvider>
+            <RoomProvider>
+                <Routes>
+                    <Route path="/" element={<App />}>
+                        <Route path="" element={<Home />} />
+                        <Route path="create-room" element={<CreateRoomView />} />
+                        <Route path="room/:id" element={<Room />} />
 
-                    <Route path="" element={<AuthContainer />}>
-                        <Route path="login" element={<LoginView />} />
-                        <Route path="signup" element={<SignUpView />} />
-                        <Route path="" element={<ProtectedRoutes />}>
-                            <Route path="user-edit/me" element={<UserEditView />} />
-                            <Route path="password-edit/me" element={<PasswordEditView />} />
-                            <Route path="delete-me" element={<UserDeleteView />} />
+                        <Route path="" element={<AuthContainer />}>
+                            <Route path="login" element={<LoginView />} />
+                            <Route path="signup" element={<SignUpView />} />
+                            <Route path="" element={<ProtectedRoutes />}>
+                                <Route path="user-edit/me" element={<UserEditView />} />
+                                <Route path="password-edit/me" element={<PasswordEditView />} />
+                                <Route path="delete-me" element={<UserDeleteView />} />
+                            </Route>
                         </Route>
                     </Route>
-                </Route>
-                <Route path="logout" element={<Logout />} />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
-        </RoomProvider>
+                    <Route path="logout" element={<Logout />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </RoomProvider>
+        </UserProvider>
     </BrowserRouter>
     // </StrictMode>
 );

@@ -11,7 +11,7 @@ import {
 import IRoom from "../../interfaces/IRoom";
 import RoomDS from "../../data_services/RoomDS";
 import { useNavigate } from "react-router-dom";
-import { useRoom } from '../../contexts/RoomContext';
+import { useRoom } from "../../hooks/useRoom";
 
 type RoomProps = {
   room: IRoom;

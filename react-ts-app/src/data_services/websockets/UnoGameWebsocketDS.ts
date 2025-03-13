@@ -29,8 +29,7 @@ export class UnoGameWebsocketDS {
         this.connectionStatus$.next("connecting");
 
         // Connect to WebSocket with authentication token
-        const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsUrl = `${wsProtocol}//localhost:8000/ws/rooms/${this.roomId}/uno/?token=${this.token}`;
+        const wsUrl = `${import.meta.env.VITE_WS_URL}ws/rooms/${this.roomId}/uno/?token=${this.token}`;
         this.socket = new WebSocket(wsUrl);
 
         this.socket.onopen = () => {

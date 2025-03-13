@@ -4,6 +4,7 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
+User = get_user_model()
 from urllib.parse import parse_qs
 from api_app.models import Room
 from api_app.services import uno_game_service
@@ -27,7 +28,6 @@ class UnoGameConsummer(JsonWebsocketConsumer):
                 # Validate token and get user
                 access_token = AccessToken(token)
                 user_id = access_token["user_id"]
-                User = get_user_model()
                 self.user = User.objects.get(id=user_id)
                 if self.user.room_id != self.room_id:
                     raise Exception(f"User tried to connect to a room he is not in")

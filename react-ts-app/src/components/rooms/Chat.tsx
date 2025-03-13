@@ -36,7 +36,7 @@ export default function Chat() {
         
         // WebSocket setup
         const token = localStorage.getItem(storageAccessTokenKey);
-        const wsUrl = `ws://localhost:8000/ws/rooms/${roomId}/chat/?token=${token}`;
+        const wsUrl = `${import.meta.env.VITE_WS_URL}ws/rooms/${roomId}/chat/?token=${token}`;
         const ws = new WebSocket(wsUrl);
         webSocketRef.current = ws;
 

@@ -1,13 +1,5 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-
-interface RoomContextType {
-  currentRoomId: string | null;
-  setCurrentRoomId: (roomId: string | null) => void;
-  joinRoom: (roomId: string) => void;
-  leaveRoom: () => void;
-}
-
-const RoomContext = createContext<RoomContextType | undefined>(undefined);
+import React, { useState, ReactNode } from 'react';
+import { RoomContext } from './RoomContextStore';
 
 export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(() => {
@@ -30,12 +22,4 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       {children}
     </RoomContext.Provider>
   );
-};
-
-export const useRoom = (): RoomContextType => {
-  const context = useContext(RoomContext);
-  if (context === undefined) {
-    throw new Error('useRoom must be used within a RoomProvider');
-  }
-  return context;
 };

@@ -10,7 +10,7 @@ import RoomDS from "../../data_services/RoomDS";
 
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useRoom } from "../../contexts/RoomContext";
+import { useRoom } from "../../hooks/useRoom";
 // import Chat from "./Chat";
 import UnoGame from "./UnoGame";
 
