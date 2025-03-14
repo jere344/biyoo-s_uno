@@ -16,6 +16,11 @@ class CustomUser(AbstractUser):
     games_won = models.IntegerField(default=0)
     is_online = models.BooleanField(default=False)
 
+    @property
+    def card_back(self):
+        active_card = self.card_back_inventory.filter(is_active=True).first()
+        return active_card.card_back if active_card else None
+
     def to_dict(self) -> dict:
         return {
             'id': self.id,
@@ -51,4 +56,4 @@ def user_updated(sender, instance:CustomUser, **kwargs):
             )
         except:
             # Handle any channel layer errors
-            pass
+            print(f"Failed to send user update for user {instance.id}: {str(e)}")

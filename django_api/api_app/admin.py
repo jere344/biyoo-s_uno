@@ -32,3 +32,22 @@ class UnoCardAdmin(admin.ModelAdmin):
 admin.site.register(UnoCard, UnoCardAdmin)
 
     
+from .models.shop import CardBack, CardBackInventory
+
+class CardBackAdmin(admin.ModelAdmin):
+    list_display = ['name', 'price', 'image_tag']
+    readonly_fields = ['image_tag']
+    search_fields = ['name']
+    ordering = ['name']
+    fields = ['name', 'price', 'image', 'image_tag']  # Include image field
+
+    def image_tag(self, obj):
+        from django.utils.html import mark_safe
+        return mark_safe(f'<img src="/media/{obj.image.name}" width="70" height="100" />')
+    
+admin.site.register(CardBack, CardBackAdmin)
+
+class CardBackInventoryAdmin(admin.ModelAdmin):
+    list_display = ['user', 'card_back', 'is_active']
+
+admin.site.register(CardBackInventory, CardBackInventoryAdmin)

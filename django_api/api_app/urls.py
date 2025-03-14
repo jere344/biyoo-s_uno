@@ -1,12 +1,9 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from api_app.consummers import chat_consummer, uno_game_consummer, user_consummer  # added import for user consumer
-
+from api_app.views import room, script, shop  # added import for shop views
 
 router = DefaultRouter()
-
-from api_app.views import room, script
-
 
 urlpatterns = [
   path('', include(router.urls)),
@@ -24,6 +21,11 @@ urlpatterns = [
 
   path("rooms/<int:pk>/chat/", room.ChatViewSet.as_view({'get': 'list', 'post': 'create'})),
   path("rooms/<int:pk>/chat/<int:message_id>/", room.ChatViewSet.as_view({'delete': 'destroy'})),
+  
+  path("shop/card_backs/", shop.CardBackListView.as_view(), name="card_back_list"),
+  path("shop/card_backs/purchase/<int:card_back_id>/", shop.PurchaseCardBackView.as_view(), name="purchase_card_back"),
+  path("shop/inventory/", shop.CardBackInventoryView.as_view(), name="card_back_inventory"),
+  path("shop/inventory/activate/<int:inventory_id>/", shop.CardBackInventoryView.as_view(), name="activate_card_back"),
 ]
 
 websocket_urlpatterns = [

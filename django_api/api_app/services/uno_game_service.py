@@ -1,5 +1,5 @@
 from functools import lru_cache
-from api_app.models.uno import UnoGame, UnoPlayer, UnoCard   
+from api_app.models.uno import CardBack, UnoGame, UnoPlayer, UnoCard   
 
 import random
 
@@ -11,6 +11,7 @@ class UnoGameRules:
         self.starting_cards_count = 7
         self.starting_deck = []
         self.players = []
+        self.card_back = "default"
 
     def verify(self):
         if len(self.players) < 2:
@@ -60,6 +61,9 @@ class UnoGameService:
 
         self.game.direction = False
         self.game.game_over = False
+        self.game.stored_to_draw = 0
+        self.game.winner = None
+        self.game.card_back = CardBack.objects.get(name=rules.card_back)
         self.game.save()
         
         random.shuffle(rules.starting_deck)

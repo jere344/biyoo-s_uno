@@ -58,17 +58,17 @@ class Scheduler:
 scheduler = Scheduler()
 
 # Example task using the scheduler
-@scheduler.register_task(interval=60)  # Run every 60 seconds
-def give_card_currency_to_online_users():
-    from auth_app.models import CustomUser as User
+# @scheduler.register_task(interval=60)  # Run every 60 seconds
+# def give_card_currency_to_online_users():
+#     from auth_app.models import CustomUser as User
     
-    online_users = User.objects.filter(is_online=True)
-    for user in online_users:
-        try:
-            user.cards_currency += 2
-            user.save()
-        except Exception as e:
-            print(f"Error giving currency to user {user.username}: {str(e)}")
+#     online_users = User.objects.filter(is_online=True)
+#     for user in online_users:
+#         try:
+#             user.cards_currency += 2
+#             user.save()
+#         except Exception as e:
+#             print(f"Error giving currency to user {user.username}: {str(e)}")
 
 def start_scheduler():
     scheduler.start()

@@ -166,7 +166,10 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             )
     
     def stop_game(self, content):
-        UnoGame.objects.filter(room=self.room).first().delete() 
+        try :
+            UnoGame.objects.filter(room=self.room).first().delete() 
+        except AttributeError:
+            pass
 
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,

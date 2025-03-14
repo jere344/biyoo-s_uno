@@ -27,14 +27,29 @@ class UnoCard(models.Model):
             "image": f"{settings.MEDIA_FULL_URL}{self.image}"
         }
 
+class CardBack(models.Model):
+    image = models.ImageField(upload_to="card_back", verbose_name="image")
+    price = models.IntegerField(verbose_name="prix", default=0)
+    name = models.CharField(max_length=100, verbose_name="nom")
+
+    def __str__(self):
+        return f"CardBack {self.name} : {self.id} - {self.price}"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "image": f"{settings.MEDIA_FULL_URL}{self.image}",
+            "price": self.price,
+            "name": self.name
+        }
+
 class UnoPlayer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="joueur")
     hand = models.ManyToManyField(UnoCard, verbose_name="main")
     player_number = models.IntegerField(verbose_name="numéro de joueur", db_index=True)
     said_uno = models.BooleanField(verbose_name="a dit uno", default=False)
     game = models.ForeignKey("UnoGame", on_delete=models.CASCADE, verbose_name="partie", related_name="players")
-    card_back = models.ForeignKey(UnoCard, on_delete=models.CASCADE, verbose_name="dos de carte", related_name="in_game_back", null=True)
-    
+     
     def __str__(self):
         return f"{self.user.username}"
     
@@ -54,7 +69,7 @@ class UnoPlayer(models.Model):
             "player_number": self.player_number,
             "hand": [card.to_dict() for card in self.hand.all()],
             "said_uno": self.said_uno,
-            "card_back" : UnoCard.objects.get(id=1).to_dict()
+            "card_back": self.user.card_back.to_dict() if self.user.card_back else CardBack.objects.get(name="default").to_dict()
         }
         
     
@@ -68,7 +83,8 @@ class UnoGame(models.Model):
     stored_to_draw = models.IntegerField(verbose_name="cartes à piocher", default=0) # for +2 and +4 cards
     game_over = models.BooleanField(verbose_name="fin de partie")
     winner = models.ForeignKey(UnoPlayer, on_delete=models.CASCADE, verbose_name="gagnant", related_name="won", null=True)
-
+    card_back = models.ForeignKey(CardBack, on_delete=models.SET_NULL, verbose_name="dos de carte", null=True)
+    
     @property
     def current_player(self) -> UnoPlayer:
         return self.players.get(player_number=self.current_player_number)
@@ -83,7 +99,7 @@ class UnoGame(models.Model):
             "game_over": self.game_over,
             "current_player_number": self.current_player_number,
             "players": [player.to_dict() for player in self.players.all()],
-            "card_back" : UnoCard.objects.get(id=1).to_dict(),
+            "card_back" : self.card_back.to_dict() if self.card_back else CardBack.objects.get(name="default").to_dict(),
             "winner": self.winner.to_dict() if self.winner else None
         }
     
@@ -95,4 +111,3 @@ class UnoGame(models.Model):
         verbose_name_plural = "parties"
         ordering = ['id']
 
- 

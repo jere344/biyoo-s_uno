@@ -66,7 +66,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
             
             console.log(`Reconnecting in ${delay}ms (attempt ${attempt})`);
-            setTimeout(connectWebSocket, delay);
+            // setTimeout(connectWebSocket, delay); // Uncomment to enable reconnect
         };
 
         newSocket.onerror = (error) => {

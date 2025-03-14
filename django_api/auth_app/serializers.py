@@ -8,7 +8,7 @@ import os
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "username", "profile_picture"]
+        fields = ["first_name", "last_name", "email", "username", "profile_picture", "cards_currency", "games_played", "games_won", "is_online"]
 
     def update(self, instance, validated_data):
         if 'profile_picture' in validated_data:
