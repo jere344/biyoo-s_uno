@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
     Typography,
@@ -11,7 +11,11 @@ import {
     DialogContent,
     DialogActions,
     Avatar,
+    IconButton,
+    Tooltip,
 } from "@mui/material";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import Game3DScene from "./Game3DScene";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
@@ -49,6 +53,41 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
     onDenyUno,
 }) => {
     const [openStopDialog, setOpenStopDialog] = useState<boolean>(false);
+    const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+    const fullscreenContainerRef = useRef<HTMLDivElement>(null);
+
+    // Toggle fullscreen mode
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            if (fullscreenContainerRef.current?.requestFullscreen) {
+                fullscreenContainerRef.current.requestFullscreen().then(() => {
+                    setIsFullscreen(true);
+                }).catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().then(() => {
+                    setIsFullscreen(false);
+                }).catch(err => {
+                    console.error(`Error attempting to exit fullscreen: ${err.message}`);
+                });
+            }
+        }
+    };
+
+    // Add event listener for fullscreen change
+    React.useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
 
     // Render game status section
     const renderGameStatus = () => {
@@ -117,14 +156,16 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
             {/* Game status section */}
             {renderGameStatus()}
 
-            {/* 3D Game Canvas */}
+            {/* 3D Game Canvas with Fullscreen Button */}
             <Box
+                ref={fullscreenContainerRef}
                 sx={{
-                    height: "500px",
+                    height: isFullscreen ? "100vh" : "500px",
                     width: "100%",
                     mb: 3,
-                    borderRadius: "8px",
+                    borderRadius: isFullscreen ? "0" : "8px",
                     overflow: "hidden",
+                    position: "relative",
                 }}
             >
                 <Canvas shadows dpr={[1, 2]}>
@@ -145,10 +186,24 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                         maxPolarAngle={Math.PI / 2}
                     />
                 </Canvas>
+                
+                <Box sx={{ position: "absolute", top: 10, right: 10, zIndex: 10 }}>
+                    <Tooltip title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+                        <IconButton 
+                            onClick={toggleFullscreen}
+                            sx={{ 
+                                bgcolor: 'rgba(255, 255, 255, 0.7)', 
+                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.9)' }
+                            }}
+                        >
+                            {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Box>
 
-            {/* Game instructions */}
-            {isMyTurn && (
+            {/* Game instructions - Only show if not in fullscreen */}
+            {isMyTurn && !isFullscreen && (
                 <Typography variant="subtitle1" sx={{ textAlign: "center", mt: 2, color: "green" }}>
                     C'est à toi de jouer! Pose une carte ou pioche dans la pile.
                 </Typography>

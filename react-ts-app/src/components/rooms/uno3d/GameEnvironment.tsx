@@ -41,7 +41,7 @@ const GameEnvironment: React.FC = () => {
 
             {/* Glass table surface */}
             <mesh rotation={[0, 0, 0]} position={[0, -0.2, 0]} receiveShadow>
-                <cylinderGeometry args={[6, 6, 0.2, 32]} />
+                <cylinderGeometry args={[6, 6, 0.2, 128]} />
                 <meshPhysicalMaterial 
                     transparent={true}
                     opacity={0.6}

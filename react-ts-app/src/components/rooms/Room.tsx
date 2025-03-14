@@ -302,7 +302,7 @@ export default function Room() {
                                             size="small"
                                             inputProps={{ min: 2, max: 10, step: 1 }}
                                             sx={{
-                                                width: "130px",
+                                                width: "150px",
                                                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                                                 borderRadius: "12px",
                                                 "& .MuiOutlinedInput-root": {
