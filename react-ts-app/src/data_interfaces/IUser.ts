@@ -8,6 +8,7 @@ export interface IUser {
     cards_currency: number;
     games_played: number;
     games_won: number;
+    room_id: number;
 }
 
 export interface IPublicUser {

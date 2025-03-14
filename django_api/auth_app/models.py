@@ -16,6 +16,7 @@ class CustomUser(AbstractUser):
     games_played = models.IntegerField(default=0)
     games_won = models.IntegerField(default=0)
     is_online = models.BooleanField(default=False)
+    last_activity = models.DateTimeField(auto_now=True)
 
     @property
     def card_back(self):
@@ -31,7 +32,8 @@ class CustomUser(AbstractUser):
             'cards_currency': self.cards_currency,
             'games_played': self.games_played,
             'games_won': self.games_won,
-            'is_online': self.is_online
+            'is_online': self.is_online,
+            'last_activity': self.last_activity.isoformat()
         }
     
     def to_dict_public(self) -> dict:
@@ -40,7 +42,7 @@ class CustomUser(AbstractUser):
             'username': self.username,
             "profile_picture": f"{settings.MEDIA_FULL_URL}{self.profile_picture}" if self.profile_picture else None,
             'games_played': self.games_played,
-            'games_won': self.games_won
+            'games_won': self.games_won,
         }
 
 

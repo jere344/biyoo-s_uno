@@ -49,7 +49,6 @@ const Leaderboard: React.FC = () => {
         setLoading(true);
         try {
             const response = await LeaderboardDS.getLeaderboard({ sort_by: sortBy, limit: 100 });
-            console.log("Leaderboard data:", response.data);
             setLeaderboardData(response.data);
         } catch (error) {
             console.error("Error fetching leaderboard data:", error);

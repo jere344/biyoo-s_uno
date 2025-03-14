@@ -45,17 +45,14 @@ class RoomViewSet(ModelViewSet):
     
     def join(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
-        user = request.user
-        room.users.add(user)
+        request.user.room = room
+        request.user.save()
         return Response(room.to_dict(), status=status.HTTP_200_OK)
 
     def leave(self, request, pk):
-        room = get_object_or_404(Room, pk=pk)
-        user = request.user
-        room.users.remove(user)
-        if room.users.count() == 0:
-            room.delete()
-        return Response(room.to_dict(), status=status.HTTP_200_OK)
+        request.user.room = None
+        request.user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ChatViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'delete']

@@ -16,7 +16,6 @@ import { motion } from "framer-motion";
 import IRoom from "../../interfaces/IRoom";
 import RoomDS from "../../data_services/RoomDS";
 import { useNavigate } from "react-router-dom";
-import { useRoom } from "../../hooks/useRoom";
 import PeopleIcon from "@mui/icons-material/People";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
@@ -48,7 +47,6 @@ export default function RoomListItem({ room }: RoomProps) {
   const [isJoining, setIsJoining] = useState(false);
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
-  const { joinRoom } = useRoom();
   
   const occupancyPercentage = (room.users.length / room.player_limit) * 100;
   const isRoomFull = room.users.length >= room.player_limit;
@@ -66,7 +64,6 @@ export default function RoomListItem({ room }: RoomProps) {
   const handleJoinRoom = () => {
     setIsJoining(true);
     RoomDS.join(room.id).then((response) => {
-      joinRoom(room.id);
       navigate(`/room/${response.data.id}`);
     }).catch(() => {
       setIsJoining(false);

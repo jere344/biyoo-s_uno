@@ -70,5 +70,28 @@ scheduler = Scheduler()
 #         except Exception as e:
 #             print(f"Error giving currency to user {user.username}: {str(e)}")
 
+
+from django.db import transaction
+import logging
+
+@scheduler.register_task(interval=300)
+def remove_inactive_users_from_rooms():
+    from auth_app.models import CustomUser as User
+    
+    try:
+        with transaction.atomic():
+            inactive_users = User.objects.filter(
+                is_online=False,
+                last_activity__lte=timezone.now() - timezone.timedelta(minutes=5),
+                room__isnull=False  # Only get users that are actually in a room
+            )
+            for user in inactive_users:
+                print(f"User {user.username} is inactive. Removing from room...")
+                user.room = None
+                user.save(update_fields=['room'])
+                
+    except Exception as e:
+        print(f"Error in remove_inactive_users_from_rooms: {str(e)}")
+
 def start_scheduler():
     scheduler.start()

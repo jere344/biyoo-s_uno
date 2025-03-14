@@ -8,6 +8,7 @@ const get = (): Promise<AxiosResponse<IRoom[]>> => (
 )
 
 const getOne = (id: number): Promise<AxiosResponse<IRoom>> => (
+  console.log(id),
   CustomAxios.get(`rooms/${id}/`)
 )
 
@@ -23,8 +24,8 @@ const join = (id: number): Promise<AxiosResponse<IRoom>> => (
   CustomAxios.post(`rooms/${id}/join/`)
 )
 
-const leave = (room: IRoom): Promise<AxiosResponse<IRoom>> => (
-  CustomAxios.post(`rooms/${room.id}/leave/`)
+const leave = (room_id: number): Promise<AxiosResponse<IRoom>> => (
+  CustomAxios.post(`rooms/${room_id}/leave/`)
 )
 
 const RoomDS = {

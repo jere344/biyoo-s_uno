@@ -13,14 +13,12 @@ import RoomDS from "../../data_services/RoomDS";
 
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useRoom } from "../../hooks/useRoom";
 import Chat from "./Chat";
 import UnoGame from "./UnoGame";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Room() {
     const { id } = useParams();
-    const { leaveRoom } = useRoom();
     const [room, setRoom] = useState<IRoom>({
         id: 0,
         name: "",
@@ -31,6 +29,7 @@ export default function Room() {
 
     const navigate = useNavigate();
 
+    // initial room fetch
     useEffect(() => {
         if (!id) return;
         
@@ -43,6 +42,23 @@ export default function Room() {
                 navigate("/");
             });
     }, [navigate, id]);
+
+     // Refresh the room every 60 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (!id) return;
+
+            RoomDS.getOne(parseInt(id, 10))
+                .then((response) => {
+                    setRoom(response.data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching room:", error);
+                });
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [id]);
 
     const [editingName, setEditingName] = useState(false);
     const [newRoomName, setNewRoomName] = useState(room.name);
@@ -96,9 +112,8 @@ export default function Room() {
     };
 
     const handleLeaveRoom = () => {
-        RoomDS.leave(room)
+        RoomDS.leave(room.id)
             .then(() => {
-                leaveRoom();
                 navigate("/");
             })
             .catch((error) => {

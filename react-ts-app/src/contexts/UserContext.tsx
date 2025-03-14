@@ -36,17 +36,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                 if (message.type === "user_data" || message.type === "user_update") {
                     // Transform snake_case to camelCase for React
                     const userData = message.data;
-                    setUser({
-                        id: userData.id,
-                        username: userData.username,
-                        profilePicture: userData.profile_picture,
-                        roomId: userData.room_id,
-                        is_online: userData.is_online,
-                        cards_currency: userData.cards_currency,
-                        game_played: userData.game_played,
-                        game_won: userData.game_won,
-                        // Add more fields as they're added to the model
-                    });
+                    setUser(userData);
                 }
             } catch (err) {
                 console.error("Error processing WebSocket message:", err);

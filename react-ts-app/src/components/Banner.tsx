@@ -5,7 +5,6 @@ import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "./App";
 import BannerUserMenu from "./BannerUserMenu";
-import { useRoom } from "../hooks/useRoom";
 import { useUser } from "../hooks/useUser";
 import cardsCurrencyIcon from "@assets/img/cards_currency.png";
 import React from "react";
@@ -18,7 +17,6 @@ import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 
 function Banner() {
     const navigate: NavigateFunction = useNavigate();
-    const { currentRoomId } = useRoom();
     const { user } = useUser();
     const theme = useTheme();
     const colorMode = React.useContext(ColorModeContext);
@@ -67,7 +65,7 @@ function Banner() {
                         </Link>
                     </motion.div>
 
-                    {currentRoomId && (
+                    {user?.room_id && (
                         <motion.div
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -75,7 +73,7 @@ function Banner() {
                         >
                             <Button
                                 variant="contained"
-                                onClick={() => navigate(`/room/${currentRoomId}`)}
+                                onClick={() => navigate(`/room/${user.room_id}`)}
                                 sx={{
                                     background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
                                     borderRadius: "20px",
@@ -86,7 +84,7 @@ function Banner() {
                                 }}
                                 startIcon={<MeetingRoomIcon />}
                             >
-                                Room {currentRoomId}
+                                Room {user.room_id}
                             </Button>
                         </motion.div>
                     )}
