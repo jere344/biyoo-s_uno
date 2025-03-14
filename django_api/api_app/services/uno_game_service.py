@@ -93,7 +93,13 @@ class UnoGameService:
         self.game.save()
         
     def finish_turn(self):
-        if self.game.current_player.hand.count() == 0:
+        winner = None
+        for player in self.game.players.all():
+            if player.hand.count() == 0:
+                winner = player
+                break
+
+        if winner is not None:
             self.game.game_over = True
             self.game.winner = self.game.current_player
             self.game.save()

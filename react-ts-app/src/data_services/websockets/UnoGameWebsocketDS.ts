@@ -20,7 +20,7 @@ export class UnoGameWebsocketDS {
     }
 
     connect() {
-        console.log("TEST 2 : Connecting to UnoGame WebSocket...");
+        // console.log("TEST 2 : Connecting to UnoGame WebSocket...");
         if (this.socket) {
             this.disconnect();
         }
@@ -32,7 +32,7 @@ export class UnoGameWebsocketDS {
         this.socket = new WebSocket(wsUrl);
 
         this.socket.onopen = () => {
-            console.log("TEST 3 : Connected to UnoGame WebSocket");
+            // console.log("TEST 3 : Connected to UnoGame WebSocket");
             this.connectionStatus$.next("connected");
             this.reconnectAttempts = 0;
         };
@@ -48,7 +48,7 @@ export class UnoGameWebsocketDS {
                     this.playerCount$.next(data.count);
                 }
                 else if (data.type === "error") {
-                    console.error("TEST 6 : WebSocket error:", data.error);
+                    // console.error("TEST 6 : WebSocket error:", data.error);
                     this.error$.next(data.error);
                 }
                 else {
@@ -62,7 +62,7 @@ export class UnoGameWebsocketDS {
         };
 
         this.socket.onclose = (event) => {
-            console.log("TEST 7 : Disconnected from UnoGame WebSocket:", event.code);
+            // console.log("TEST 7 : Disconnected from UnoGame WebSocket:", event.code);
             this.connectionStatus$.next("disconnected");
 
             if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -94,7 +94,7 @@ export class UnoGameWebsocketDS {
     }
 
     private send(message: unknown) {
-        console.log("TEST 8 : Sending message to UnoGame WebSocket:", message);
+        // console.log("TEST 8 : Sending message to UnoGame WebSocket:", message);
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(JSON.stringify(message));
         } else {
