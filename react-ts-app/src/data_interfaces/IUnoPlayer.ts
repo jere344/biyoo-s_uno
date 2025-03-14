@@ -7,4 +7,5 @@ export default interface UnoPlayer {
     score?: number;
     player_number: string;
     card_back: UnoCard;
+    said_uno: boolean;
 }

@@ -30,6 +30,8 @@ export interface UnoGameBoard3dProps {
     onDrawCard: () => void;
     onRestartGame: () => void;
     onStopGame: () => void;
+    onSayUno: () => void;
+    onDenyUno: (playerId: number) => void;
 }
 
 const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
@@ -43,6 +45,8 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
     onDrawCard,
     onRestartGame,
     onStopGame,
+    onSayUno,
+    onDenyUno,
 }) => {
     const [openStopDialog, setOpenStopDialog] = useState<boolean>(false);
 
@@ -130,6 +134,8 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                         isMyTurn={isMyTurn}
                         onPlayCard={onPlayCard}
                         onDrawCard={onDrawCard}
+                        onSayUno={onSayUno}
+                        onDenyUno={onDenyUno}
                     />
                     <OrbitControls
                         enableZoom={true}

@@ -151,6 +151,10 @@ class UnoGameConsummer(JsonWebsocketConsumer):
             self.start_game(content)
         elif content["type"] == "play_card":
             self.play_card(content)
+        elif content["type"] == "say_uno":
+            self.say_uno(content)
+        elif content["type"] == "deny_uno":
+            self.deny_uno(content)
         elif content["type"] == "draw_card":
             self.draw_card(content)
         elif content["type"] == "restart_game":
@@ -225,6 +229,21 @@ class UnoGameConsummer(JsonWebsocketConsumer):
         game_service = self.get_game_service()
         game_service.draw_card(self.user)
         
+        self._send_game_state()
+    
+    def say_uno(self, content):
+        print("SAY UNO")
+        game_service = self.get_game_service()
+        game_service.say_uno(self.user)
+        
+        self._send_game_state()
+    
+    def deny_uno(self, content):
+        game_service = self.get_game_service()
+        
+        target_player = User.objects.get(id=content["player_id"])
+        game_service.deny_uno(target_player)
+
         self._send_game_state()
 
 

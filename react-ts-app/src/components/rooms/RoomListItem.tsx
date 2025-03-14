@@ -10,7 +10,6 @@ import {
   Typography,
   Chip,
   LinearProgress,
-  Divider,
   Badge,
 } from "@mui/material";
 import { motion } from "framer-motion";

@@ -3,7 +3,7 @@ import { Paper, Typography, Box, Button, CircularProgress, Alert, Snackbar, Dial
 import { UnoGameWebsocketDS } from "../../data_services/websockets/UnoGameWebsocketDS";
 import { useParams } from "react-router-dom";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
-import UnoGameBoard from "./UnoGameBoard";
+// import UnoGameBoard from "./UnoGameBoard";
 import UnoGameBoard3d from "./uno3d/UnoGameBoard3d";
 
 export default function UnoGame() {
@@ -139,6 +139,18 @@ export default function UnoGame() {
         }
     };
 
+    const handleSayUno = () => {
+        if (gameService) {
+            gameService.sayUno();
+        }
+    }
+
+    const handleDenyUno = (playerId: number) => {
+        if (gameService) {
+            gameService.denyUno(playerId);
+        }
+    }
+
     // Main render method
     if (connectionStatus === "connecting") {
         return (
@@ -264,6 +276,8 @@ export default function UnoGame() {
                 onDrawCard={handleDrawCard}
                 onRestartGame={handleRestartGame}
                 onStopGame={handleStopGame}
+                onSayUno={handleSayUno}
+                onDenyUno={handleDenyUno}
             />
 
             {/* <UnoGameBoard

@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Text } from "@react-three/drei";
+import { Text, Text3D } from "@react-three/drei";
 import IUnoGame from "../../../data_interfaces/IUnoGame";
 import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
 import UnoCard3D from "./UnoCard3D";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
+// import gt from "./gt.json";
+import font from "@assets/fonts/Roboto-Black_Regular.json";
 
 // Profile Picture Component
 const ProfilePicture = ({ imageUrl, position, rotation }) => {
@@ -20,9 +22,10 @@ const ProfilePicture = ({ imageUrl, position, rotation }) => {
 interface OtherPlayersHandsProps {
     gameState: IUnoGame;
     myPlayer: IUnoPlayer | null;
+    onDenyUno: (playerId: number) => void;
 }
 
-const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlayer }) => {
+const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlayer, onDenyUno }) => {
     
     const tableRadius = 4; // Distance from center of table
     const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer.id);
@@ -31,6 +34,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
     const [animatingCard, setAnimatingCard] = useState<IUnoCard | null>(null);
     const [drawingPlayerId, setDrawingPlayerId] = useState<number | null>(null);
     const previousHandsRef = useRef<{ [key: number]: number }>({});
+    const [hoveredDenialId, setHoveredDenialId] = useState<number | null>(null);
 
     const handleAnimationComplete = useCallback(() => {
         if (animatingPlayerId !== null) {
@@ -105,6 +109,28 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                         position={[x - 1.6, 1.8, z]}
                         rotation={[0, rotationY, 0]}
                     />
+                ) : null;
+                
+                const unoDenialElement = player.hand === 1 && player.said_uno === false ? (
+                    <Text3D
+                        key={`uno-${player.id}`}
+                        font={font}
+                        position={[x, 0.5, z]}
+                        rotation={[0, rotationY, 0]}
+                        scale={hoveredDenialId === player.id ? [3.5, 3.5, 2.5] : [3, 3, 2]}
+                        anchorX="center"
+                        anchorY="middle"
+                        onClick={() => onDenyUno(player.user.id)}
+                        onPointerEnter={() => setHoveredDenialId(player.id)}
+                        onPointerLeave={() => setHoveredDenialId(null)}
+                  >
+                    !
+                    <meshBasicMaterial
+                        transparent
+                        color={hoveredDenialId === player.id ? "rgb(203, 15, 15)" : "rgb(188, 58, 58))"} 
+                        opacity={hoveredDenialId === player.id ? 0.8 : 0.5}
+                    />
+                  </Text3D>
                 ) : null;
 
                 // Render the player's cards
@@ -195,6 +221,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                     <React.Fragment key={`player-${player.id}`}>
                         {nameElement}
                         {profilePictureElement}
+                        {unoDenialElement}
                         {cards}
                     </React.Fragment>
                 );

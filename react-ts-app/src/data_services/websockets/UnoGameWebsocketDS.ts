@@ -1,5 +1,4 @@
 import { BehaviorSubject } from "rxjs";
-import { diff } from "deep-diff";
 
 export class UnoGameWebsocketDS {
     private socket: WebSocket | null = null;
@@ -43,7 +42,7 @@ export class UnoGameWebsocketDS {
             try {
                 const data = JSON.parse(event.data);
                 if (data.type === "game_state") {
-                    this.updateGameState(data.game);
+                    this.gameState$.next(data.game);
                 }
                 else if (data.type === "player_count") {
                     this.playerCount$.next(data.count);
@@ -107,52 +106,6 @@ export class UnoGameWebsocketDS {
         }
     }
 
-    private updateGameState(newGameState: UnoGame) {
-        const oldGameState = this.gameState$.value;
-        if (!oldGameState) {
-            this.gameState$.next(newGameState);
-            return;
-        }
-
-        const changes = diff(oldGameState, newGameState);
-        if (!changes) return; // No changes detected
-
-        // Apply only changes
-        const updatedGameState = { ...oldGameState };
-        changes.forEach(change => {
-            if (change.kind === "E") {
-                // Edit: Property changed
-                this.setByPath(updatedGameState, change.path!, change.rhs);
-            } else if (change.kind === "A") {
-                // Array modification
-                const array = this.getByPath(updatedGameState, change.path!);
-                if (Array.isArray(array)) {
-                    if (change.item?.kind === "N") {
-                        array.splice(change.index!, 0, change.item.rhs); // Add item
-                    } else if (change.item?.kind === "D") {
-                        array.splice(change.index!, 1); // Remove item
-                    }
-                }
-            }
-        });
-
-        this.gameState$.next(updatedGameState);
-    }
-
-    private getByPath(obj: unknown, path: Array<string | number>): unknown {
-        return path.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
-    }
-
-    private setByPath(obj: unknown, path: Array<string | number>, value: unknown) {
-        let current = obj;
-        for (let i = 0; i < path.length - 1; i++) {
-            const key = path[i];
-            if (!current[key]) current[key] = typeof path[i + 1] === "number" ? [] : {};
-            current = current[key];
-        }
-        current[path[path.length - 1]] = value;
-    }
-
     // Game action methods
     startGame() {
         this.send({ type: "start_game" });
@@ -176,5 +129,13 @@ export class UnoGameWebsocketDS {
 
     drawCard() {
         this.send({ type: "draw_card" });
+    }
+
+    sayUno() {
+        this.send({ type: "say_uno" });
+    }
+
+    denyUno( playerId: number) {
+        this.send({ type: "deny_uno", player_id: playerId });
     }
 }
