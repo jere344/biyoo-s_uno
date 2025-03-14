@@ -14,6 +14,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CasinoIcon from '@mui/icons-material/Casino';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 
 function Banner() {
     const navigate: NavigateFunction = useNavigate();
@@ -111,6 +112,27 @@ function Banner() {
                                         }}
                                     >
                                         <DashboardIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </motion.div>
+
+                            {/* Leaderboard Button */}
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Tooltip title="Leaderboard">
+                                    <IconButton 
+                                        color="inherit" 
+                                        onClick={() => navigate("/leaderboard")}
+                                        sx={{
+                                            backgroundColor: "rgba(255,255,255,0.1)",
+                                            "&:hover": {
+                                                backgroundColor: "rgba(255,255,255,0.2)",
+                                            }
+                                        }}
+                                    >
+                                        <LeaderboardIcon />
                                     </IconButton>
                                 </Tooltip>
                             </motion.div>

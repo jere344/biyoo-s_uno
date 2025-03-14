@@ -97,6 +97,11 @@ class UnoGameService:
             self.game.game_over = True
             self.game.winner = self.game.current_player
             self.game.save()
+            for player in self.game.players.all():
+                player.user.games_played += 1
+                if player == self.game.winner:
+                    player.user.games_won += 1
+                player.user.save()
             return
         self._set_to_next_turn()
         self.game.save()
@@ -185,6 +190,9 @@ class UnoGameService:
             self.game.current_card = UnoCard.objects.get(is_special=True, color=color, action=card.action)
 
         self.finish_turn()
+        
+        player.user.cards_currency += 1
+        player.user.save()
 
     def draw_card(self, user):
         """draw a card and finish the turn"""

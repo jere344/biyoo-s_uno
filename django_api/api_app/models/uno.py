@@ -61,11 +61,7 @@ class UnoPlayer(models.Model):
     def to_dict(self) -> dict:
         return {
             "id": self.id,
-            "user": {
-                "id": self.user.id,
-                "username": self.user.username,
-                "profile_picture": f"{settings.MEDIA_FULL_URL}{self.user.profile_picture}" if self.user.profile_picture else None
-            },
+            "user": self.user.to_dict_public(),
             "player_number": self.player_number,
             "hand": [card.to_dict() for card in self.hand.all()],
             "said_uno": self.said_uno,

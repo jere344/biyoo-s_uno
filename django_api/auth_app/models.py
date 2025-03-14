@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.db.models.signals import post_save
@@ -31,6 +32,15 @@ class CustomUser(AbstractUser):
             'games_played': self.games_played,
             'games_won': self.games_won,
             'is_online': self.is_online
+        }
+    
+    def to_dict_public(self) -> dict:
+        return {
+            'id': self.id,
+            'username': self.username,
+            "profile_picture": f"{settings.MEDIA_FULL_URL}{self.profile_picture}" if self.profile_picture else None,
+            'games_played': self.games_played,
+            'games_won': self.games_won
         }
 
 
