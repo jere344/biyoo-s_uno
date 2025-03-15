@@ -13,7 +13,7 @@ const ProfilePicture = ({ imageUrl, position, rotation }) => {
     const texture = useLoader(TextureLoader, imageUrl);
     return (
         <mesh position={position} rotation={rotation}>
-            <circleGeometry args={[0.4, 32]} />
+            <circleGeometry args={[0.6, 32]} />
             <meshBasicMaterial map={texture} />
         </mesh>
     );
@@ -26,7 +26,7 @@ interface OtherPlayersHandsProps {
 }
 
 const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlayer, onDenyUno }) => {
-    
+    const cardWidth = 0.8;
     const tableRadius = 4; // Distance from center of table
     const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer?.id);
     
@@ -96,7 +96,9 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                         anchorX="center"
                         anchorY="bottom"
                     >
-                        {player.user.username} ({player.hand} cards)
+                        {player.user.username} ({typeof player.hand === "object" && player.hand !== null
+                            ? (console.error("Expected a non-object value for player.hand. It probably means your user is unknown, please reload the page"), Object.keys(player.hand).length)
+                            : player.hand} cartes)
                     </Text>
                 );
                 
@@ -105,7 +107,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                     <ProfilePicture 
                         key={`profile-${player.id}`}
                         imageUrl={player.user.profile_picture}
-                        position={[x - 1.6, 1.8, z]}
+                        position={[x, 2.8, z]}
                         rotation={[0, rotationY, 0]}
                     />
                 ) : null;
@@ -133,7 +135,6 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                 ) : null;
 
                 // Render the player's cards
-                const cardWidth = 0.7; // Smaller than player's cards
                 const cardsPerRow = Math.min(7, player.hand);
 
                 
@@ -162,11 +163,11 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                             card={dummyCard}
                             position={[
                                 x + cardX * Math.cos(rotationY),
-                                0.7 - 0.1 * row,
+                                cardWidth - 0.1 * row,
                                 z + cardX * Math.sin(rotationY) + cardZ * Math.cos(rotationY),
                             ]}
                             rotation={[0, rotationY, 0]}
-                            scale={[0.7, 0.7, 0.1]}
+                            scale={[cardWidth, cardWidth, 0.1]}
                         />
                     );
                 });
@@ -182,11 +183,11 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                             scale={[1.5, 1.5, 0.1]}
                             originalPosition={[
                                 x + (player.hand % cardsPerRow) * cardWidth * Math.cos(rotationY),
-                                0.7 - 0.1 * Math.floor(player.hand / cardsPerRow),
+                                cardWidth - 0.1 * Math.floor(player.hand / cardsPerRow),
                                 z + (player.hand % cardsPerRow) * cardWidth * Math.sin(rotationY) + 0.3 * Math.floor(player.hand / cardsPerRow) * Math.cos(rotationY),
                             ]}
                             originalRotation={[0, rotationY + Math.PI, 0]}
-                            originalScale={[0.7, 0.7, 0.1]}
+                            originalScale={[cardWidth, cardWidth, 0.1]}
                             animationDuration={0.3}
                             onAnimationComplete={handleAnimationComplete}
                         />
@@ -201,11 +202,11 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                             cardBack={player.card_back}
                             position={[
                                 x,
-                                0.7,
+                                cardWidth,
                                 z,
                             ]}
                             rotation={[0, rotationY + Math.PI, 0]}
-                            scale={[0.7, 0.7, 0.1]}
+                            scale={[cardWidth, cardWidth, 0.1]}
                             originalPosition={[-2.5, 0, 1]}
                             originalRotation={[-Math.PI / 2, 0, 0]}
                             originalScale={[1, 1.5, 0.01]}

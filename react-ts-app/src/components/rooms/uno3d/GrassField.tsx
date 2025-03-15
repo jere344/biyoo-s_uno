@@ -4,6 +4,7 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import grassShader from "./shaders/grass.js";
 import grassjpg from "@assets/img/grass.jpg";
+import grassjpgcopy from "@assets/img/grass copy.jpg";
 import cloudjpg from "@assets/img/cloud.jpg";
 
 // Utility: converts a value from one range to another.
@@ -86,11 +87,9 @@ type GrassFieldProps = {
 };
 
 const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHeight, bladeHeightVariation }: GrassFieldProps) => {
-
-
-    
     // Load textures using the react-three-fiber loader.
     const grassTexture = useLoader(TextureLoader, grassjpg);
+    const grassTextureCopy = useLoader(TextureLoader, grassjpgcopy);
     const cloudTexture = useLoader(TextureLoader, cloudjpg);
     cloudTexture.wrapS = cloudTexture.wrapT = THREE.RepeatWrapping;
 
@@ -177,7 +176,7 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
             {/* a simple green circe bellow the grass */}
             <mesh position={planePosition} rotation={[-Math.PI / 2, 0, 0]}>
                 <circleGeometry args={[planeSize / 2, 32]} />
-                <meshBasicMaterial color="green" />
+                <meshBasicMaterial map={grassTextureCopy} side={THREE.DoubleSide} />
             </mesh>
         </>
     );
