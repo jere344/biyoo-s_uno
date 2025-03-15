@@ -12,6 +12,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import PeopleIcon from '@mui/icons-material/People';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useUser } from "../../hooks/useUser";
+import ArcadeImage from "@assets/img/arcade.jpg";
 
 // UNO card colors
 const UNO_COLORS = {
@@ -367,7 +368,7 @@ export default function UnoGame() {
                     padding: "2.5rem", 
                     position: "relative",
                     backgroundColor: "rgba(0,0,0,0.7)",
-                    backgroundImage: "url('https://t3.ftcdn.net/jpg/03/06/59/52/360_F_306595210_sTtKiI1G7Ulo8q3OfAXpKvMrDXOEb8eJ.jpg')",
+                    backgroundImage: `url(${ArcadeImage})`,
                     backgroundSize: "cover",
                     backgroundBlendMode: "overlay",
                     borderRadius: "20px",

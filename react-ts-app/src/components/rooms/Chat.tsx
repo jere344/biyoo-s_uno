@@ -8,6 +8,7 @@ import SendIcon from "@mui/icons-material/Send";
 import ChatIcon from "@mui/icons-material/Chat";
 import { storageUsernameKey, storageAccessTokenKey } from "../../data_services/CustomAxios";
 import { motion, AnimatePresence } from "framer-motion";
+import ReceiveMessageSound from "@assets/audio/tap-notification-180637.mp3";
 
 export default function Chat() {
     const { id } = useParams(); // room id from route params
@@ -16,7 +17,7 @@ export default function Chat() {
     const [newMessage, setNewMessage] = useState("");
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const webSocketRef = useRef<WebSocket | null>(null);
-    const notificationSound = new Audio('https://cdn.pixabay.com/download/audio/2023/12/09/audio_37d2c0e795.mp3?filename=tap-notification-180637.mp3');
+    const notificationSound = new Audio(ReceiveMessageSound);
 
     const CurrentUserName = localStorage.getItem(storageUsernameKey);
 
