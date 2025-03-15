@@ -7,6 +7,7 @@ export interface IUser {
     games_played: number;
     games_won: number;
     room_id: number;
+    profile_effect?: string;
 }
 
 export interface IPublicUser {
@@ -15,4 +16,5 @@ export interface IPublicUser {
     profile_picture?: File | null;
     games_played: number;
     games_won: number;
+    profile_effect?: string;
 }

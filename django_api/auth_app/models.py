@@ -26,13 +26,13 @@ class CustomUser(AbstractUser):
         return {
             'id': self.id,
             'username': self.username,
-            'profile_picture': self.profile_picture.url if self.profile_picture else None,
+            'profile_picture': f"{settings.MEDIA_FULL_URL}{self.profile_picture}"  if self.profile_picture else None,
             'room_id': self.room.id if self.room else None,
             'cards_currency': self.cards_currency,
             'games_played': self.games_played,
             'games_won': self.games_won,
             'is_online': self.is_online,
-            'last_activity': self.last_activity.isoformat()
+            'last_activity': self.last_activity.isoformat(),
         }
     
     def to_dict_public(self) -> dict:

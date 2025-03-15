@@ -17,15 +17,18 @@ import {
     MenuItem,
     Tooltip,
     Typography,
-    Avatar,
+    Avatar
 } from "@mui/material";
 import {
     InfoOutlined as InfoOutlinedIcon,
     Logout as LogoutIcon,
     PersonOutlineOutlined as PersonOutlineOutlinedIcon,
 } from "@mui/icons-material";
+import CustomAvatar from "./customAvatar/CustomAvatar";
+import { useUser } from "../hooks/useUser";
 
 function BannerUserMenu(): React.JSX.Element {
+    const { user } = useUser();
     const navigate: NavigateFunction = useNavigate();
     const [aboutOpen, setAboutOpen] = useState(false);
     const [userAnchorEl, setUserAnchorEl] = useState<HTMLElement | null>(null);
@@ -69,7 +72,14 @@ function BannerUserMenu(): React.JSX.Element {
                         onClick={handleOpenUserMenu}
                         sx={{ px: 0 }}
                     >
-                        <Avatar alt="Profile picture" src={profilePicture} sx={{ bgcolor: "secondary.main" }} />
+                        {
+                            user?.profile_picture ? (
+                                <CustomAvatar user={user} size={40} showOnlineStatus={true} />
+                            ) : (
+                                <Avatar alt="Profile picture" src={profilePicture} sx={{ bgcolor: "secondary.main" }} />
+                            )
+                        }
+
                     </IconButton>
                 </Tooltip>
                 <Menu
