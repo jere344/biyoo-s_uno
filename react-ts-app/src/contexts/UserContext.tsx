@@ -31,6 +31,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         };
 
         newSocket.onmessage = (event) => {
+            console.log("WebSocket message received:", event.data);
             try {
                 const message = JSON.parse(event.data);
                 if (message.type === "user_data" || message.type === "user_update") {

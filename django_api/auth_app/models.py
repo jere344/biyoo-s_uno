@@ -54,7 +54,6 @@ def user_updated(sender, instance:CustomUser, **kwargs):
     """
     Signal handler to broadcast user updates to connected clients
     """
-    print("Updated user:", instance)
     channel_layer = get_channel_layer()
     if channel_layer:
         # Send to user-specific group
@@ -66,6 +65,6 @@ def user_updated(sender, instance:CustomUser, **kwargs):
                     "data": instance.to_dict()
                 }
             )
-        except:
+        except Exception as e:
             # Handle any channel layer errors
             print(f"Failed to send user update for user {instance.id}: {str(e)}")

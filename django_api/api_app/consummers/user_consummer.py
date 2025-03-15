@@ -1,9 +1,9 @@
-
 import json
 from urllib.parse import parse_qs
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
+from django.db import transaction
 User = get_user_model()
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -19,7 +19,7 @@ class UserConsumer(AsyncWebsocketConsumer):
                 # Validate token and get user
                 access_token = AccessToken(token)
                 user_id = access_token["user_id"]
-                self.user = await database_sync_to_async(User.objects.get)(id=user_id)
+                self.user = await self.get_user_by_id(user_id)
                 self.scope["user"] = self.user
             except Exception as e:
                 self.send(text_data=json.dumps({
@@ -53,15 +53,14 @@ class UserConsumer(AsyncWebsocketConsumer):
         )
         
         # Send initial user data
-        user_data = await self.get_user_data(self.user_id)
-        await self.send(text_data=json.dumps({
-            'type': 'user_data',
-            'data': user_data
+        user_data = await self.get_user_data()
+        self.send(text_data=json.dumps({
+            "type": "user_data",
+            "data": user_data
         }))
 
         # set user online
-        self.user.is_online = True
-        await database_sync_to_async(self.user.save)()
+        await self.set_user_online(self.user_id, True)
 
     
     async def disconnect(self, close_code):
@@ -71,24 +70,30 @@ class UserConsumer(AsyncWebsocketConsumer):
                 self.channel_name
             )
         if hasattr(self, "user"):
-            self.user.is_online = False
-            await database_sync_to_async(self.user.save)()
+            await self.set_user_online(self.user.id, False)
     
     async def receive(self, text_data):
         # Handle any client-to-server communication if needed
         pass
+
+    @database_sync_to_async
+    def get_user_data(self):
+        return self.user.to_dict()
+
     
     @database_sync_to_async
-    def get_user_data(self, user_id):
-        user = User.objects.get(id=user_id)
-        return {
-            'id': user.id,
-            'username': user.username,
-            'profile_picture': user.profile_picture.url if user.profile_picture else None,
-            'room_id': user.room.id if user.room else None,
-            'test': 'test',
-            # Add future fields like currency, etc. here
-        }
+    def get_user_by_id(self, user_id):
+        with transaction.atomic():
+            return User.objects.select_for_update().get(id=user_id)
+    
+    @database_sync_to_async
+    def set_user_online(self, user_id, is_online):
+        with transaction.atomic():
+            user = User.objects.select_for_update().get(id=user_id)
+            if user.is_online != is_online:
+                user.is_online = is_online
+                user.save()
+            return user
     
     async def user_update(self, event):
         """

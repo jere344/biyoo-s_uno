@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.utils.timezone import now
 from auth_app.models import CustomUser as User
 
@@ -10,7 +11,7 @@ class LastActivityTraceMiddleware:
         response = self.get_response(request)
 
         user: User  = request.user
-        if user.is_authenticated:
+        if user.is_authenticated and user.last_activity < now() - timedelta(minutes=5):
             user.last_activity = now()
             user.save()
         return response
