@@ -55,7 +55,7 @@ export default function Room() {
                 .catch((error) => {
                     console.error("Error fetching room:", error);
                 });
-        }, 60000);
+        }, 5000);
 
         return () => clearInterval(interval);
     }, [id]);

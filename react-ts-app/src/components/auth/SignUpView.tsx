@@ -10,8 +10,6 @@ import IUser from "../../data_interfaces/IUser";
 import UserDS from "../../data_services/UserDS";
 
 type FormSignUpFields = {
-  firstname: string;
-  lastname: string;
   email: string;
   username: string;
   password: string;
@@ -25,14 +23,6 @@ function SignUpView() {
   const [submitting, setSubmitting] = useState(false);
 
   const formSchema = yup.object().shape({
-    firstname: yup
-      .string()
-      .required("Le prénom est obligatoire")
-      .max(50, "Le prénom doit contenir au plus 50 caractères"),
-    lastname: yup
-      .string()
-      .required("Le nom de famille est obligatoire")
-      .max(50, "Le nom de famille doit contenir au plus 50 caractères"),
     username: yup
       .string()
       .required("Le nom d'utilisateur est obligatoire")
@@ -67,8 +57,6 @@ function SignUpView() {
     setSubmitting(true);
 
     const newUser: IUser = {
-      first_name: data.firstname,
-      last_name: data.lastname,
       username: data.username,
       email: data.email,
     };
@@ -124,20 +112,8 @@ function SignUpView() {
         sx={{ mt: 1, width: "100%" }}
       >
         <FormTextField
-          autoComplete="firstname"
-          autoFocus
-          errorText={errors.firstname?.message}
-          label="Prénom"
-          registerReturn={register("firstname")}
-        />
-        <FormTextField
-          autoComplete="lastname"
-          errorText={errors.lastname?.message}
-          label="Nom de famille"
-          registerReturn={register("lastname")}
-        />
-        <FormTextField
           autoComplete="email"
+          autoFocus
           errorText={errors.email?.message}
           label="Courriel"
           registerReturn={register("email")}

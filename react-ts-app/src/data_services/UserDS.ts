@@ -38,8 +38,6 @@ const logout = (): Promise<boolean> => {
 
 const register = (user: IUser, password: string): Promise<AxiosResponse<IUser>> => (
   CustomAxios.post("auth/register/", {
-    first_name: user.first_name,
-    last_name: user.last_name,
     username: user.username,
     email: user.email,
     password,
@@ -48,8 +46,6 @@ const register = (user: IUser, password: string): Promise<AxiosResponse<IUser>> 
 
 const save = (user: IUser): Promise<AxiosResponse<IUser>> => {
   const formData = new FormData();
-  formData.append('first_name', user.first_name);
-  formData.append('last_name', user.last_name);
   formData.append('email', user.email);
   formData.append('username', user.username);
   if (user.profile_picture) {

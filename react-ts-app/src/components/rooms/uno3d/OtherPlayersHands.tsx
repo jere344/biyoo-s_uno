@@ -28,7 +28,7 @@ interface OtherPlayersHandsProps {
 const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlayer, onDenyUno }) => {
     
     const tableRadius = 4; // Distance from center of table
-    const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer.id);
+    const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer?.id);
     
     const [animatingPlayerId, setAnimatingPlayerId] = useState<number | null>(null);
     const [animatingCard, setAnimatingCard] = useState<IUnoCard | null>(null);
@@ -63,7 +63,6 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
         });
     }, [gameState.players, gameState.players.map(player => player.hand).join()]);
 
-    if (!gameState.players || !myPlayer) return null;
     
 
     // Calculate positions around the table

@@ -11,7 +11,6 @@ import json
 class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     room = models.ForeignKey("api_app.Room", on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
-    # Add future fields here
     cards_currency = models.IntegerField(default=0)
     games_played = models.IntegerField(default=0)
     games_won = models.IntegerField(default=0)

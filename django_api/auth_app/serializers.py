@@ -8,7 +8,7 @@ import os
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "username", "profile_picture", "cards_currency", "games_played", "games_won", "is_online"]
+        fields = ["email", "username", "profile_picture", "cards_currency", "games_played", "games_won", "is_online"]
 
     def update(self, instance, validated_data):
         if 'profile_picture' in validated_data:
@@ -35,7 +35,7 @@ class UserPasswordSerializer(ModelSerializer):
 class RegisterSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "username", "password", "profile_picture"]
+        fields = ["email", "username", "password", "profile_picture"]
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
