@@ -11,6 +11,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PeopleIcon from '@mui/icons-material/People';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import { useUser } from "../../hooks/useUser";
 
 // UNO card colors
 const UNO_COLORS = {
@@ -22,6 +23,7 @@ const UNO_COLORS = {
 };
 
 export default function UnoGame() {
+    const { user } = useUser();
     const { id } = useParams(); // room id from route params
     const roomId = parseInt(id as string, 10);
     const [gameService, setGameService] = useState<UnoGameWebsocketDS | null>(null);
@@ -31,7 +33,6 @@ export default function UnoGame() {
         "disconnected"
     );
     const [error, setError] = useState<string | null>(null);
-    const [myUserName, setMyUserName] = useState<string>("");
     
     // Color selection state
     const [colorSelectionOpen, setColorSelectionOpen] = useState<boolean>(false);
@@ -45,7 +46,6 @@ export default function UnoGame() {
         const username = localStorage.getItem(storageUsernameKey);
         
         if (token && username && roomId) {
-            setMyUserName(username);
             const service = new UnoGameWebsocketDS(roomId, token);
             setGameService(service);
             setIsReadyToConnect(true);
@@ -93,8 +93,8 @@ export default function UnoGame() {
     }, [gameService, isReadyToConnect]);
 
     const getMyPlayer = (): UnoPlayer | null => {
-        if (!gameState || !myUserName) return null;
-        return gameState.players.find((p) => p.user.username === myUserName) || null;
+        if (!gameState || !user) return null;
+        return gameState.players.find((p) => p.user.id === user?.id ) || null;
     }
 
     const getCurrentPlayer = (): UnoPlayer | null => {

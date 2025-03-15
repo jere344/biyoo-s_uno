@@ -8,7 +8,6 @@ const get = (): Promise<AxiosResponse<IRoom[]>> => (
 )
 
 const getOne = (id: number): Promise<AxiosResponse<IRoom>> => (
-  console.log(id),
   CustomAxios.get(`rooms/${id}/`)
 )
 

@@ -54,6 +54,7 @@ def user_updated(sender, instance:CustomUser, **kwargs):
     """
     Signal handler to broadcast user updates to connected clients
     """
+    print("Updated user:", instance)
     channel_layer = get_channel_layer()
     if channel_layer:
         # Send to user-specific group

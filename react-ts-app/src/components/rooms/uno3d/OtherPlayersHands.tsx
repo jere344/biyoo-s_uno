@@ -96,7 +96,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                         anchorX="center"
                         anchorY="bottom"
                     >
-                        {player.name} ({player.hand} cards)
+                        {player.user.username} ({player.hand} cards)
                     </Text>
                 );
                 
@@ -172,7 +172,6 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                 });
 
                 if (player.id === animatingPlayerId && animatingCard) {
-                    console.log(rotationY)
                     cards.push(
                         <UnoCard3D
                             key={`card-${player.id}-animating`}

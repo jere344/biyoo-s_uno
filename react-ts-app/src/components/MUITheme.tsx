@@ -14,8 +14,12 @@ const getDesignTokens = (mode: PaletteMode) => ({
             }),
     },
     typography: {
-        fontFamily: "Games-XvD2, sans-serif",
+        fontFamily: "BiyooUnoFont, sans-serif",
         fontSize: 18,
+        fontWeightLight: 300,
+        fontWeightRegular: 400,
+        fontWeightMedium: 500,
+        fontWeightBold: 700,
     },
     components: {
         MuiAvatar: {

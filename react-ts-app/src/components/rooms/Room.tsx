@@ -447,21 +447,19 @@ export default function Room() {
                                             border: "1px dashed rgba(255,255,255,0.2)",
                                         }}
                                     >
-                                        <Box
+                                        <Avatar
                                             sx={{
                                                 width: 70,
                                                 height: 70,
-                                                borderRadius: "50%",
+                                                margin: "0 auto 10px",
                                                 backgroundColor: "rgba(255,255,255,0.1)",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                marginBottom: "10px",
                                             }}
-                                        >
-                                            <Typography variant="h4" sx={{ color: "rgba(255,255,255,0.3)" }}>?</Typography>
-                                        </Box>
-                                        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>
+                                        />
+                                        <Typography variant="body2" 
+                                            sx={{ 
+                                            color: "rgba(255,255,255,0.5)",
+                                            textAlign: "center",
+                                            }}>
                                             Place disponible
                                         </Typography>
                                     </Box>
