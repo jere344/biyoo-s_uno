@@ -38,10 +38,10 @@ class UnoGameConsummer(JsonWebsocketConsumer):
                     "type": "error",
                     "error": str(e)
                 })
-                self.close(code=4000)
+                self.close(code=3003, reason=str(e))
                 return
         else:
-            self.close()
+            self.close(code=3000, reason="Token not provided")
             return
 
         if not self.user.is_authenticated:

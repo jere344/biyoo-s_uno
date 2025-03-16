@@ -22,26 +22,14 @@ class UserConsumer(AsyncWebsocketConsumer):
                 self.user = await self.get_user_by_id(user_id)
                 self.scope["user"] = self.user
             except Exception as e:
-                self.send(text_data=json.dumps({
-                    "type": "error",
-                    "error": "failed to test token" + str(e)
-                }))
-                await self.close(code=4000)
+                await self.close(code=3003, reason="Failed to test token " + str(e))
                 return
         else:
-            self.send(text_data=json.dumps({
-                "type": "error",
-                "error": "Token not provided"
-            }))
-            await self.close(code=4000)
+            await self.close(code=3000, reason="Token not provided")
             return
 
         if not self.user.is_authenticated:
-            self.send(text_data=json.dumps({
-                "type": "error",
-                "error": "User not authenticated"
-            }))
-            await self.close(code=4000)
+            await self.close(code=3002, reason="User not authenticated")
             return
         
         # connection succcessful, add user to user group
