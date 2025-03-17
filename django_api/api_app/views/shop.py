@@ -107,11 +107,12 @@ class PurchaseProfileEffectView(APIView):
         request.user.cards_currency -= profile_effect.price
         request.user.save()
 
-        ProfileEffectInventory.objects.create(
+        inventory_item = ProfileEffectInventory.objects.create(
             user=request.user, profile_effect=profile_effect, is_active=False
         )
         return Response(
-            {"success": "Profile effect purchased"}, status=status.HTTP_201_CREATED
+            {"success": "Profile effect purchased", "id": inventory_item.id}, 
+            status=status.HTTP_201_CREATED
         )
 
 
@@ -169,11 +170,12 @@ class PurchaseGameEnvironmentView(APIView):
         request.user.cards_currency -= game_environment.price
         request.user.save()
 
-        GameEnvironmentInventory.objects.create(
+        inventory_item = GameEnvironmentInventory.objects.create(
             user=request.user, game_environment=game_environment, is_active=False
         )
         return Response(
-            {"success": "Game environment purchased"}, status=status.HTTP_201_CREATED
+            {"success": "Game environment purchased", "id": inventory_item.id}, 
+            status=status.HTTP_201_CREATED
         )
 
 
