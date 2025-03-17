@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Typography, Container, Box, Chip, Paper } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import { motion, AnimatePresence } from "framer-motion";
-import { useUser } from "../../hooks/useUser";
+import { useUser } from "@hooks/useUser";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import cardsCurrencyIcon from "@assets/img/cards_currency.png";
-import AvatarEffects from "./AvatarEffects";
-import GameEnvironments from "./GameEnvironments";
-import CardBacks from "./CardBacks";
+import AvatarEffects from "./avatareffects/AvatarEffects";
+import GameEnvironments from "./gameenvironments/GameEnvironments";
+import CardBacks from "./cardbacks/CardBacks";
 
 // Custom Tab component
 const AnimatedTab = ({

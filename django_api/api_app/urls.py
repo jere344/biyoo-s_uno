@@ -19,8 +19,18 @@ urlpatterns = [
   
   path("shop/card_backs/", shop.CardBackListView.as_view(), name="card_back_list"),
   path("shop/card_backs/purchase/<int:card_back_id>/", shop.PurchaseCardBackView.as_view(), name="purchase_card_back"),
-  path("shop/inventory/", shop.CardBackInventoryView.as_view(), name="card_back_inventory"),
-  path("shop/inventory/activate/<int:inventory_id>/", shop.CardBackInventoryView.as_view(), name="activate_card_back"),
+  path("shop/card_backs/inventory/", shop.CardBackInventoryView.as_view(), name="card_back_inventory"),
+  path("shop/card_backs/inventory/activate/<int:inventory_id>/", shop.CardBackInventoryView.as_view(), name="activate_card_back"),
+  
+  path("shop/profile_effects/", shop.ProfileEffectListView.as_view(), name="profile_effect_list"),
+  path("shop/profile_effects/purchase/<int:profile_effect_id>/", shop.PurchaseProfileEffectView.as_view(), name="purchase_profile_effect"),
+  path("shop/profile_effects/inventory/", shop.ProfileEffectInventoryView.as_view(), name="profile_effect_inventory"),
+  path("shop/profile_effects/inventory/activate/<int:inventory_id>/", shop.ProfileEffectInventoryView.as_view(), name="activate_profile_effect"),
+  
+  path("shop/game_environments/", shop.GameEnvironmentListView.as_view(), name="game_environment_list"),
+  path("shop/game_environments/purchase/<int:game_environment_id>/", shop.PurchaseGameEnvironmentView.as_view(), name="purchase_game_environment"),
+  path("shop/game_environments/inventory/", shop.GameEnvironmentInventoryView.as_view(), name="game_environment_inventory"),
+  path("shop/game_environments/inventory/activate/<int:inventory_id>/", shop.GameEnvironmentInventoryView.as_view(), name="activate_game_environment"),
   
   path("leaderboard/", leaderboard.LeaderboardView.as_view(), name="leaderboard"),
 ]

@@ -27,7 +27,10 @@
     "paths": {
       "@/*": ["*"],
       "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@DI": ["data_interfaces/*"],
+      "@DS": ["data_services/*"],
     }
   },
   "include": ["src"]
