@@ -27,7 +27,6 @@ export interface UnoGameBoard3dProps {
     myPlayer: IUnoPlayer | null;
     currentPlayer: IUnoPlayer | null;
     isMyTurn: boolean;
-    myUserName: string;
     roomId: number;
     connectionStatus: "connected" | "disconnected" | "connecting";
     onPlayCard: (cardId: number) => void;
@@ -105,13 +104,13 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                     >
                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <Typography variant="subtitle1">Fin de la partie! Victoire:</Typography>
-                            {gameState.winner.user.profile_picture && (
+                            {gameState.winner?.user.profile_picture && (
                                 <Avatar
                                     src={gameState.winner.user.profile_picture}
                                     sx={{ width: 32, height: 32, marginRight: 1, marginLeft: 1 }}
                                 />
                             )}
-                            <Typography variant="subtitle1">{gameState.winner.user.username || "Nobody"}</Typography>
+                            <Typography variant="subtitle1">{gameState.winner?.user.username || "Nobody"}</Typography>
                         </Box>
                     </Alert>
                 )}

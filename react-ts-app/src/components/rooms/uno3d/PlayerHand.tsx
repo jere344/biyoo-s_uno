@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
-import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
+import IUnoPlayer from "@DI/IUnoPlayer";
 import UnoCard3D from "./UnoCard3D";
+import IUnoCard from "@DI/IUnoCard";
 
 interface PlayerHandProps {
     myPlayer: IUnoPlayer;
@@ -9,12 +10,15 @@ interface PlayerHandProps {
 }
 
 const PlayerHand: React.FC<PlayerHandProps> = ({ myPlayer, isMyTurn, onPlayCard }) => {
+    if (typeof myPlayer.hand === 'number') return;
     const [animatingCardId, setAnimatingCardId] = useState<number | null>(null);
     
-    const cardWidth = 1;
-    const totalWidth = myPlayer.hand.length * cardWidth;
+    const totalWidth = 7;
+
+    const cardWidth = Math.min(totalWidth / myPlayer.hand.length, 1);
+
     const startX = -totalWidth / 2 + cardWidth / 2;
-    const superpose_offset = 0.01;
+    const superpose_offset = 0.001;
     
     const handlePlayCard = useCallback((cardId: number) => {
         setAnimatingCardId(cardId);
@@ -33,7 +37,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ myPlayer, isMyTurn, onPlayCard 
 
     return (
         <>
-            {myPlayer.hand.map((card, index) => {
+            {myPlayer.hand.map((card:IUnoCard, index:number) => {
                 const x = startX + index * cardWidth;
                 const isPlayable = isMyTurn && card.can_play;
                 const isAnimating = card.id === animatingCardId;

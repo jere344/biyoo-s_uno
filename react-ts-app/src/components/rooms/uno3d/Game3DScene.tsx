@@ -5,7 +5,7 @@ import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
 import UnoCard3D from "./UnoCard3D";
 import DrawPile from "./DrawPile";
 import OtherPlayersHands from "./OtherPlayersHands";
-import GrassEnvironment from "./environments/GrassEnvironment";
+import Environments from "./environments/Environments";
 import PlayerHand from "./PlayerHand";
 
 interface Game3DSceneProps {
@@ -39,7 +39,7 @@ const Game3DScene: React.FC<Game3DSceneProps> = (
 
     return (
         <>
-            <GrassEnvironment />
+            <Environments environment="city"/>
 
             {/* Current card in play - uses the delayed state */}
             {delayedCurrentCard && (

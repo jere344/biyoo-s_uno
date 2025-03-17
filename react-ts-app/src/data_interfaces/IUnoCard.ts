@@ -1,6 +1,6 @@
 
-export default interface UnoCard {
-    id?: number;
+export default interface IUnoCard {
+    id: number;
     color?: string;
     action?: string;
     image: string;

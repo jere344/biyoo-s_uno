@@ -1,5 +1,5 @@
 // src/interfaces/IMessage.ts
-import IUser from "./IUser";
+import { IUser } from "./IUser";
 
 export default interface IMessage {
   id: number;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Typography,
@@ -17,7 +17,13 @@ export default function CreateRoomView() {
   const handleSubmit = async () => {
     if (!newRoomName.trim() || playerLimit < 2 || playerLimit > 8) return;
     try {
-      await RoomDS.create({ name: newRoomName, player_limit: playerLimit }); // Updated create call
+      await RoomDS.create({
+        name: newRoomName, player_limit: playerLimit,
+        id: 0,
+        users: [],
+        is_open: false,
+        created_at: ""
+      }); // Updated create call
       navigate("/"); // Navigate back to the room list page after creation
     } catch (error) {
       console.error("Failed to create room", error);

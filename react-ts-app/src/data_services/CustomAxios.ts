@@ -35,6 +35,35 @@ export const unsetLocalToken = (): void => {
   CustomAxios.defaults.headers.Authorization = null;
 }
 
+export const forceRefreshtoken = async (): Promise<void | undefined> => {
+  const refreshToken = localStorage.getItem(storageRefreshTokenKey)
+
+  if (refreshToken) {
+    const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]))
+
+    // exp date in token is expressed in seconds, while now() returns milliseconds:
+    const now = Math.ceil(Date.now() / 1000)
+    
+    if (tokenParts.exp > now) {
+      try {
+        const response = await CustomAxios
+          .post('auth/token-refresh/', { refresh: refreshToken })
+        console.log('Axios - force refresh token')
+        localStorage.setItem(storageAccessTokenKey, response.data.access)
+        if (response.data.refresh) {
+          localStorage.setItem(storageRefreshTokenKey, response.data.refresh)
+        }
+
+        CustomAxios.defaults.headers.Authorization = headerToken + response.data.access
+      } catch (err) {
+        console.log('Axios error handler - auth/token-refresh/', err);
+      }
+    }
+    unsetLocalToken()
+  }
+  return Promise.reject()
+}
+
 CustomAxios.interceptors.response.use(
   (response) => {
     return response;

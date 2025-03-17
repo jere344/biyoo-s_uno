@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ReactNode, useRef } from "react";
 import { storageAccessTokenKey } from "../data_services/CustomAxios";
 import { IUser } from "../models/IUser";
+import { forceRefreshtoken } from "../data_services/CustomAxios";
 import { UserContext } from "../contexts/UserContextStore";
 
 interface UserProviderProps {
@@ -21,8 +22,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
         // Create new WebSocket connection
         const token = localStorage.getItem(storageAccessTokenKey);
+        if (!token) {
+            console.log("user is not connected")
+            setTimeout(connectWebSocket, 5000)
+            return null;
+        }
         const wsUrl = `${import.meta.env.VITE_WS_URL}ws/user/?token=${token}`;
-
         const newSocket = new WebSocket(wsUrl);
 
         newSocket.onopen = () => {
@@ -31,7 +36,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         };
 
         newSocket.onmessage = (event) => {
-            console.log("WebSocket message received:", event.data);
             try {
                 const message = JSON.parse(event.data);
                 if (message.type === "user_data" || message.type === "user_update") {
@@ -46,6 +50,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
         newSocket.onclose = (event) => {
             console.log("WebSocket disconnected:", event.code, event.reason);
+            if (event.code == 3003) {
+                console.log("start force refresh");
+                forceRefreshtoken();
+                return;
+            }
             // Implement exponential backoff
             reconnectAttemptRef.current += 1;
             const attempt = reconnectAttemptRef.current;

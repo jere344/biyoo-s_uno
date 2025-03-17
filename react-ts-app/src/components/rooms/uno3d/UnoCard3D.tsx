@@ -18,7 +18,7 @@ interface UnoCard3DProps {
     originalRotation?: [number, number, number] | null;
     originalScale?: [number, number, number] | null;
     animationDuration?: number | null;
-    onAnimationComplete?: () => void | null;
+    onAnimationComplete?: (() => void) | null;
 }
 
 const UnoCard3D: React.FC<UnoCard3DProps> = ({
@@ -108,7 +108,7 @@ const UnoCard3D: React.FC<UnoCard3DProps> = ({
     useFrame(() => {
         if (!meshRef.current) return;
         // Smoothly interpolate the hover animation value
-        hoverAnimationRef.current += ((hovered ? 1 : 0) - hoverAnimationRef.current) * 0.15;
+        hoverAnimationRef.current += ((hovered ? 1 : 0) - hoverAnimationRef.current) * 0.3;
         // Update the mesh position while preserving x and z from positionRef
         meshRef.current.position.x = positionRef.current[0];
         meshRef.current.position.y =
@@ -123,7 +123,7 @@ const UnoCard3D: React.FC<UnoCard3DProps> = ({
                 time.current.start();
             }
             // calculate the progress of the animation
-            const progress = easeInOutQuad(Math.min(1, time.current.getElapsedTime() / animationDuration));
+            const progress = easeInOutQuad(Math.min(1, time.current.getElapsedTime() / (animationDuration ?? 1)));
 
             
             // update the position
@@ -163,8 +163,14 @@ const UnoCard3D: React.FC<UnoCard3DProps> = ({
                 e.stopPropagation();
                 if (isPlayable && onClick) onClick();
             }}
-            onPointerOver={() => setHovered(true)}
-            onPointerOut={() => setHovered(false)}
+            onPointerOver={(e) => {
+                e.stopPropagation();
+                setHovered(true)
+            }}
+            onPointerOut={(e) => {
+                e.stopPropagation();
+                setHovered(false)
+            }}
             castShadow
         >
             <boxGeometry args={[1, 1.5, 0.05]} />

@@ -8,8 +8,8 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import PeopleIcon from "@mui/icons-material/People";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
-import { IRoom } from "../../interfaces/IRoom";
-import RoomDS from "../../data_services/RoomDS";
+import IRoom from "@DI/IRoom";
+import RoomDS from "@DS/RoomDS";
 
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -25,6 +25,7 @@ export default function Room() {
         is_open: true,
         player_limit: 2,
         users: [],
+        created_at:"",
     });
 
     const navigate = useNavigate();

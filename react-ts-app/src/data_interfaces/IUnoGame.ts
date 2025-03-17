@@ -1,14 +1,14 @@
-import UnoCard from './IUnoCard';
-import UnoPlayer from './IUnoPlayer';
+import IUnoCard from './IUnoCard';
+import IUnoPlayer from './IUnoPlayer';
 
-export default interface UnoGame {
+export default interface IUnoGame {
     id?: number;
-    players: UnoPlayer[];
+    players: IUnoPlayer[];
     current_player_number: string;
-    current_card: UnoCard;
-    pile: UnoCard[] | int;
-    direction: string;
-    winner?: UnoPlayer;
-    card_back: UnoCard;
+    current_card: IUnoCard;
+    pile: IUnoCard[] | number;
+    direction: boolean;
+    winner?: IUnoPlayer;
+    card_back: IUnoCard;
     game_over?: boolean;
 }

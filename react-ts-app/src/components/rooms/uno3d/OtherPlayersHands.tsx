@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Text, Text3D } from "@react-three/drei";
-import IUnoGame from "../../../data_interfaces/IUnoGame";
-import IUnoPlayer from "../../../data_interfaces/IUnoPlayer";
+import IUnoGame from "@DI/IUnoGame";
+import IUnoPlayer from "@DI/IUnoPlayer";
+import IUnoCard from "@DI/IUnoCard";
 import UnoCard3D from "./UnoCard3D";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
@@ -52,6 +53,7 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
 
     useEffect(() => {
         gameState.players.forEach((player) => {
+            if (typeof player.hand !== 'number') return;
             if (previousHandsRef.current[player.id] > player.hand) {
                 setAnimatingPlayerId(player.id);
                 setAnimatingCard(gameState.current_card);
@@ -63,7 +65,6 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
         });
     }, [gameState.players, gameState.players.map(player => player.hand).join()]);
 
-    
 
     // Calculate positions around the table
     return (

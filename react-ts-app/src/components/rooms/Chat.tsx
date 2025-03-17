@@ -44,7 +44,7 @@ export default function Chat() {
         webSocketRef.current = ws;
 
         ws.onopen = () => {
-            console.log("WebSocket connection established");
+            console.log("Chat WebSocket connection established");
         };
 
         ws.onmessage = (event) => {
@@ -64,7 +64,7 @@ export default function Chat() {
         };
 
         ws.onclose = () => {
-            console.log("WebSocket connection closed");
+            console.log("Chat WebSocket connection closed");
         };
 
         // Clean up WebSocket connection on component unmount

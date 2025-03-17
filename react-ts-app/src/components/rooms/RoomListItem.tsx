@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -13,7 +13,7 @@ import {
   Badge,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import IRoom from "../../interfaces/IRoom";
+import IRoom from "@DI/IRoom";
 import RoomDS from "../../data_services/RoomDS";
 import { useNavigate } from "react-router-dom";
 import PeopleIcon from "@mui/icons-material/People";

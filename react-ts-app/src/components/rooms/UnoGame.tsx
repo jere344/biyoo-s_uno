@@ -13,6 +13,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useUser } from "../../hooks/useUser";
 import ArcadeImage from "@assets/img/arcade.jpg";
+import IUnoGame from "@DI/IUnoGame"
+import IUnoPlayer from "@DI/IUnoPlayer"
 
 // UNO card colors
 const UNO_COLORS = {
@@ -28,7 +30,7 @@ export default function UnoGame() {
     const { id } = useParams(); // room id from route params
     const roomId = parseInt(id as string, 10);
     const [gameService, setGameService] = useState<UnoGameWebsocketDS | null>(null);
-    const [gameState, setGameState] = useState<UnoGame | null>(null);
+    const [gameState, setGameState] = useState<IUnoGame | null>(null);
     const [gamePlayerCount, setGamePlayerCount] = useState<number>(0);
     const [connectionStatus, setConnectionStatus] = useState<"connected" | "disconnected" | "connecting">(
         "disconnected"
@@ -93,12 +95,12 @@ export default function UnoGame() {
         };
     }, [gameService, isReadyToConnect]);
 
-    const getMyPlayer = (): UnoPlayer | null => {
+    const getMyPlayer = (): IUnoPlayer | null => {
         if (!gameState || !user) return null;
         return gameState.players.find((p) => p.user.id === user?.id ) || null;
     }
 
-    const getCurrentPlayer = (): UnoPlayer | null => {
+    const getCurrentPlayer = (): IUnoPlayer | null => {
         if (!gameState) return null;
         return gameState.players.find((p) => p.player_number === gameState.current_player_number) || null;
     };
