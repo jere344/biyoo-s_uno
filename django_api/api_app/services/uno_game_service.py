@@ -228,7 +228,7 @@ class UnoGameService:
         can be done only if you have one card, or two cards during your turn"""
         player = self.get_player(user)
         card_count = player.hand.count()
-        if card_count == 1 or (card_count == 2 and self.game.current_player_number == player.player_number):
+        if card_count == 1 or card_count == 2:
             player.said_uno = True
             player.save()
         else:

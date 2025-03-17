@@ -4,7 +4,7 @@ import { Color } from "three";
 import GrassField from "./GrassField";
 import { Sky } from "@react-three/drei";
 
-const GameEnvironment: React.FC = () => {
+const GrassEnvironment: React.FC = () => {
     const { camera, scene } = useThree();
     
     // Use effect to setup camera and scene once
@@ -65,4 +65,4 @@ const GameEnvironment: React.FC = () => {
     );
 };
 
-export default React.memo(GameEnvironment);
+export default React.memo(GrassEnvironment);

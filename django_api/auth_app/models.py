@@ -22,6 +22,11 @@ class CustomUser(AbstractUser):
         active_card = self.card_back_inventory.filter(is_active=True).first()
         return active_card.card_back if active_card else None
 
+    @property
+    def game_environment(self):
+        active_game_env = self.game_environment_inventory.filter(is_active=True).first()
+        return active_game_env.game_environment if active_game_env else None
+
     def to_dict(self) -> dict:
         return {
             'id': self.id,

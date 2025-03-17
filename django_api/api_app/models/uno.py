@@ -43,6 +43,8 @@ class CardBack(models.Model):
             "name": self.name
         }
 
+from api_app.models.shop import GameEnvironment
+
 class UnoPlayer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="joueur")
     hand = models.ManyToManyField(UnoCard, verbose_name="main")
@@ -65,7 +67,8 @@ class UnoPlayer(models.Model):
             "player_number": self.player_number,
             "hand": [card.to_dict() for card in self.hand.all()],
             "said_uno": self.said_uno,
-            "card_back": self.user.card_back.to_dict() if self.user.card_back else CardBack.objects.get(name="default").to_dict()
+            "card_back": self.user.card_back.to_dict() if self.user.card_back else CardBack.objects.get(name="default").to_dict(),
+            "game_environment": self.user.game_environment.to_dict() if self.user.game_environment else GameEnvironment.objects.get(name="default").to_dict()
         }
         
     

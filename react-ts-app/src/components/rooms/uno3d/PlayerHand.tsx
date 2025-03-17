@@ -53,7 +53,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ myPlayer, isMyTurn, onPlayCard 
                         originalPosition={isAnimating ? [x, 0.7, 4.5 + superpose_offset * index] : null}
                         originalRotation={isAnimating ? [-0.7, 0, 0] : null}
                         originalScale={isAnimating ? [1, 1, 0.1] : null}
-                        animationDuration={isAnimating ? 0.5 : null}
+                        animationDuration={isAnimating ? 0.3 : null}
                         onAnimationComplete={isAnimating ? handleAnimationComplete : null}
                     />
                 );
