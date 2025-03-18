@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
-import { Color } from "three";
 import { Environment } from "@react-three/drei";
 
 const City: React.FC = () => {
-    const { camera, scene } = useThree();
+    const { camera } = useThree();
     
     // Use effect to setup camera and scene once
     useEffect(() => {

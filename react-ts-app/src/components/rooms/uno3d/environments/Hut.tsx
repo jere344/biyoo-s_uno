@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useThree } from "@react-three/fiber";
-import { Color } from "three";
+import { Color, FogExp2 } from "three";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Sky, useTexture } from "@react-three/drei";
@@ -49,13 +49,14 @@ const Hut: React.FC<HutProps> = ({ position = [0, -4.1, 0] }) => {
 		textures.roof.repeat.set(4, 4);
 
         // Calculate camera position relative to the hut position
-        const [x, y, z] = position;
-        camera.position.set(x, y + 6.8, z + 12);
-        camera.lookAt(x, y + 6, z);
-        camera.far = 100;
-        camera.near = 0.4;
+
+        camera.position.set(0, 3.5, 9);
+        camera.lookAt(0, 2, 0);
+        camera.far = 30;
+        camera.near = 0.1;
         camera.updateProjectionMatrix();
-        scene.background = new Color(0x3f2a14);
+
+        scene.fog = new FogExp2(0xc27b58, 0.045);
     }, [camera, scene, position, textures]);
 
     // Animate lantern light with more noise
@@ -85,18 +86,18 @@ const Hut: React.FC<HutProps> = ({ position = [0, -4.1, 0] }) => {
     return (
         <group position={position}>
             {/* Night Sky */}
-            <Sky
-                distance={450000}
-                sunPosition={[0, -1, 0]} // Sun below horizon for night
-                turbidity={10}
-                rayleigh={0.5}
-                mieCoefficient={0.005}
-                mieDirectionalG={0.8}
-                inclination={0.49}
-                azimuth={0.25}
+            <Sky 
+                sunPosition={[20, 5, 100]} 
+                turbidity={8} 
+                rayleigh={6} 
+                mieCoefficient={0.002} 
+                mieDirectionalG={0.8} 
+                distance={450} 
+                inclination={0.3} 
+                azimuth={0.25} 
             />
 
-			<ambientLight intensity={0.2} />
+            <ambientLight intensity={0.15} color="#e8b27d" />
 
             {/* Visible lantern object */}
             <group position={[0, 10, 0]}>
@@ -121,6 +122,7 @@ const Hut: React.FC<HutProps> = ({ position = [0, -4.1, 0] }) => {
                 intensity={100} 
                 castShadow 
 				color="#FFC107" 
+                distance={25}
             />
 
 			{/* very short range to light player's hand */}

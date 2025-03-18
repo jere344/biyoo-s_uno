@@ -24,7 +24,7 @@ const CustomAxios = axios.create({
 export const setLocalToken = (authData: IAuthResponse): void => {
   localStorage.setItem(storageAccessTokenKey, authData.access);
   localStorage.setItem(storageRefreshTokenKey, authData.refresh);
-  localStorage.setItem(storageUsernameKey, authData.user.first_name);
+  localStorage.setItem(storageUsernameKey, authData.user.username);
   CustomAxios.defaults.headers.Authorization = headerToken + authData.access;
 }
 
@@ -55,8 +55,11 @@ export const forceRefreshtoken = async (): Promise<void | undefined> => {
         }
 
         CustomAxios.defaults.headers.Authorization = headerToken + response.data.access
+        return Promise.resolve()
       } catch (err) {
         console.log('Axios error handler - auth/token-refresh/', err);
+        unsetLocalToken(); // Clear tokens if refresh fails
+        return Promise.reject(err);
       }
     }
     unsetLocalToken()

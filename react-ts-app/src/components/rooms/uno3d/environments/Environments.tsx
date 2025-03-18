@@ -1,5 +1,6 @@
 import React from "react";
 import GrassEnvironment from "./GrassEnvironment";
+import AutumnGrassEnvironment from "./AutumnGrassEnvironment";
 import Void from "./Void";
 import City from "./city";
 import Hut from "./Hut";
@@ -9,11 +10,13 @@ interface EnvironmentsProps {
 }
 
 const Environments: React.FC<EnvironmentsProps> = ({ environment }) => {
-    switch (environment) {
+    switch (environment.toLowerCase()) {
         case "default":
             return <GrassEnvironment />
         case "grass":
             return <GrassEnvironment />
+        case "autumn":
+            return <AutumnGrassEnvironment />
         case "void":
             return <Void />
         case "city":

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, ReactNode, useRef } from "react";
+import React, { useEffect, useState, ReactNode } from "react";
 import { storageAccessTokenKey } from "../data_services/CustomAxios";
-import { IUser } from "../models/IUser";
+import { IUser } from "@DI/IUser";
 import { forceRefreshtoken } from "../data_services/CustomAxios";
 import { UserContext } from "../contexts/UserContextStore";
 
@@ -11,7 +11,6 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [user, setUser] = useState<IUser | null>(null);
     const [socket, setSocket] = useState<WebSocket | null>(null);
-    const reconnectAttemptRef = useRef(0);
 
     // Function to establish WebSocket connection
     const connectWebSocket = () => {
@@ -23,8 +22,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         // Create new WebSocket connection
         const token = localStorage.getItem(storageAccessTokenKey);
         if (!token) {
-            console.log("user is not connected")
-            setTimeout(connectWebSocket, 5000)
+            console.log("user is not connected");
+            setTimeout(connectWebSocket, 5000);
             return null;
         }
         const wsUrl = `${import.meta.env.VITE_WS_URL}ws/user/?token=${token}`;
@@ -32,7 +31,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
         newSocket.onopen = () => {
             console.log("WebSocket connected for user updates");
-            reconnectAttemptRef.current = 0; // Reset reconnect attempts on successful connection
         };
 
         newSocket.onmessage = (event) => {
@@ -51,21 +49,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         newSocket.onclose = (event) => {
             console.log("WebSocket disconnected:", event.code, event.reason);
             if (event.code == 3003) {
-                console.log("start force refresh");
-                forceRefreshtoken();
+                forceRefreshtoken().then(() => {
+                    connectWebSocket();
+                });
                 return;
             }
-            // Implement exponential backoff
-            reconnectAttemptRef.current += 1;
-            const attempt = reconnectAttemptRef.current;
-            
-            // Calculate exponential delay with a base of 1000ms
-            const baseDelay = 1000; // 1 second
-            const maxDelay = 30000; // 30 seconds max delay
-            const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
-            
-            console.log(`Reconnecting in ${delay}ms (attempt ${attempt})`);
-            setTimeout(connectWebSocket, delay); // Uncomment to enable reconnect
+
+            console.log(`Reconnecting in 5000ms`);
+            setTimeout(connectWebSocket, 5000);
+
         };
 
         newSocket.onerror = (error) => {

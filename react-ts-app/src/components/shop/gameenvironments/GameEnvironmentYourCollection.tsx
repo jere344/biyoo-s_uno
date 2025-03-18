@@ -126,22 +126,14 @@ const GameEnvironmentYourCollection: React.FC<GameEnvironmentYourCollectionProps
                                             disabled={item.is_active}
                                             onClick={() => activateEnvironment(item.id)}
                                             size="medium"
-                                            sx={{ 
-                                                minWidth: '120px',
-                                                ...(item.is_active && { 
-                                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                                    borderColor: 'white',
-                                                    color: 'white'
-                                                })
-                                            }}
                                         >
-                                            {item.is_active ? "Actif" : "Activer"}
+                                            Activer
                                         </Button>
                                     </Box>
                                     
                                     {item.is_active && (
                                         <Chip
-                                            label="Active"
+                                            label="Actif"
                                             color="primary"
                                             size="small"
                                             sx={{ 

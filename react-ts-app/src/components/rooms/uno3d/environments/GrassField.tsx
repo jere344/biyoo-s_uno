@@ -2,7 +2,7 @@ import React, { useRef, useMemo } from "react";
 import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import grassShader from "./shaders/grass.js";
+import { grassShader, autumnGrassShader } from "./shaders/GrassShader";
 import grassjpg from "@assets/img/grass.jpg";
 import grassjpgcopy from "@assets/img/grass copy.jpg";
 import cloudjpg from "@assets/img/cloud.jpg";
@@ -77,6 +77,30 @@ function generateBlade(center, vArrOffset, uv, bladeWidth, bladeHeight, bladeHei
     return { verts, indices };
 }
 
+function createStyledGroundMaterial(texture, type) {
+    if (type === "autumn") {
+        return new THREE.MeshStandardMaterial({
+            map: texture,
+            side: THREE.DoubleSide,
+            color: new THREE.Color(" #d28c4d"),
+            emissive: new THREE.Color("rgb(218, 176, 23)"),
+            emissiveIntensity: 0.5,
+            roughness: 0.8
+        });
+    } else {
+        // Default green style
+        return new THREE.MeshStandardMaterial({
+            map: texture,
+            side: THREE.DoubleSide,
+            color: new THREE.Color("#54a955"),
+            emissive: new THREE.Color("#004500"),
+            emissiveIntensity: 0.1,
+            roughness: 0.7
+        });
+    }
+}
+
+
 type GrassFieldProps = {
     planePosition: [number, number, number];
     planeSize: number;
@@ -84,9 +108,10 @@ type GrassFieldProps = {
     bladeWidth: number;
     bladeHeight: number;
     bladeHeightVariation: number;
+    type?: "autumn" | "default";
 };
 
-const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHeight, bladeHeightVariation }: GrassFieldProps) => {
+const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHeight, bladeHeightVariation, type = "default"}: GrassFieldProps) => {
     // Load textures using the react-three-fiber loader.
     const grassTexture = useLoader(TextureLoader, grassjpg);
     const grassTextureCopy = useLoader(TextureLoader, grassjpgcopy);
@@ -104,6 +129,10 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
             materialRef.current.uniforms.iTime.value = elapsedTime;
         }
     });
+    
+    const groundMaterial = useMemo(() => {
+        return createStyledGroundMaterial(grassTextureCopy, type);
+    }, [grassTextureCopy, type]);
 
     // Create the field geometry only once.
     const geometry = useMemo(() => {
@@ -159,14 +188,16 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
         [grassTexture, cloudTexture]
     );
 
+    const selectedShader = type === "autumn" ? autumnGrassShader : grassShader;
+
     return (
         <>
             <mesh geometry={geometry}>
                 <shaderMaterial
                     ref={materialRef}
                     uniforms={grassUniforms}
-                    vertexShader={grassShader.vert}
-                    fragmentShader={grassShader.frag}
+                    vertexShader={selectedShader.vert}
+                    fragmentShader={selectedShader.frag}
                     vertexColors={true}
                     side={THREE.DoubleSide}
                     // lights={true}
@@ -176,7 +207,7 @@ const GrassField = ({ planePosition, planeSize, bladeCount, bladeWidth, bladeHei
             {/* a simple green circe bellow the grass */}
             <mesh position={planePosition} rotation={[-Math.PI / 2, 0, 0]}>
                 <circleGeometry args={[planeSize / 2, 32]} />
-                <meshBasicMaterial map={grassTextureCopy} side={THREE.DoubleSide} />
+                <primitive object={groundMaterial} attach="material" />
             </mesh>
         </>
     );

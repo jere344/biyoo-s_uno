@@ -1,13 +1,9 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { storageAccessTokenKey } from "../data_services/CustomAxios";
 import { AppBar, Container, Link, Toolbar, Typography, Box, IconButton, Button, Tooltip } from "@mui/material";
-import { Brightness4, Brightness7 } from "@mui/icons-material";
-import { useTheme } from "@mui/material/styles";
-import { ColorModeContext } from "./App";
 import BannerUserMenu from "./BannerUserMenu";
 import { useUser } from "../hooks/useUser";
 import cardsCurrencyIcon from "@assets/img/cards_currency.png";
-import React from "react";
 import { motion } from "framer-motion";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CasinoIcon from '@mui/icons-material/Casino';
@@ -18,8 +14,8 @@ import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 function Banner() {
     const navigate: NavigateFunction = useNavigate();
     const { user } = useUser();
-    const theme = useTheme();
-    const colorMode = React.useContext(ColorModeContext);
+    // const theme = useTheme();
+    // const colorMode = React.useContext(ColorModeContext);
 
     return (
         <AppBar 
@@ -216,7 +212,7 @@ function Banner() {
                             </Box>
 
                             {/* Theme Toggle */}
-                            <motion.div whileHover={{ rotate: 90 }} transition={{ duration: 0.2 }}>
+                            {/* <motion.div whileHover={{ rotate: 90 }} transition={{ duration: 0.2 }}>
                                 <Tooltip title={theme.palette.mode === 'dark' ? "Light Mode" : "Dark Mode"}>
                                     <IconButton 
                                         onClick={colorMode.toggleColorMode} 
@@ -231,7 +227,7 @@ function Banner() {
                                         {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
                                     </IconButton>
                                 </Tooltip>
-                            </motion.div>
+                            </motion.div> */}
                         </Box>
                     ) : (
                         <Box display="flex" alignItems="center" gap={2}>
@@ -257,7 +253,7 @@ function Banner() {
                                 </Button>
                             </motion.div>
                             
-                            <motion.div whileHover={{ rotate: 90 }} transition={{ duration: 0.2 }}>
+                            {/* <motion.div whileHover={{ rotate: 90 }} transition={{ duration: 0.2 }}>
                                 <Tooltip title={theme.palette.mode === 'dark' ? "Light Mode" : "Dark Mode"}>
                                     <IconButton 
                                         onClick={colorMode.toggleColorMode} 
@@ -272,7 +268,7 @@ function Banner() {
                                         {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
                                     </IconButton>
                                 </Tooltip>
-                            </motion.div>
+                            </motion.div> */}
                         </Box>
                     )}
                 </Toolbar>
