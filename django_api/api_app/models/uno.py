@@ -82,8 +82,7 @@ class UnoGame(models.Model):
     stored_to_draw = models.IntegerField(verbose_name="cartes à piocher", default=0) # for +2 and +4 cards
     game_over = models.BooleanField(verbose_name="fin de partie")
     winner = models.ForeignKey(UnoPlayer, on_delete=models.CASCADE, verbose_name="gagnant", related_name="won", null=True)
-    card_back = models.ForeignKey(CardBack, on_delete=models.SET_NULL, verbose_name="dos de carte", null=True)
-    
+
     @property
     def current_player(self) -> UnoPlayer:
         return self.players.get(player_number=self.current_player_number)
@@ -98,7 +97,7 @@ class UnoGame(models.Model):
             "game_over": self.game_over,
             "current_player_number": self.current_player_number,
             "players": [player.to_dict() for player in self.players.all()],
-            "card_back" : self.card_back.to_dict() if self.card_back else CardBack.objects.get(name="default").to_dict(),
+            "card_back" : CardBack.objects.get(name="default").to_dict(),
             "winner": self.winner.to_dict() if self.winner else None
         }
     
