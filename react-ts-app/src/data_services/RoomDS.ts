@@ -23,6 +23,10 @@ const join = (id: number): Promise<AxiosResponse<IRoom>> => (
   CustomAxios.post(`rooms/${id}/join/`)
 )
 
+const joinWithCode = (id: number, code: string): Promise<AxiosResponse<IRoom>> => (
+  CustomAxios.post(`rooms/${id}/join/`, { code })
+)
+
 const leave = (room_id: number): Promise<AxiosResponse<IRoom>> => (
   CustomAxios.post(`rooms/${room_id}/leave/`)
 )
@@ -33,6 +37,7 @@ const RoomDS = {
     create,
     update,
     join,
+    joinWithCode,
     leave,
 }
   

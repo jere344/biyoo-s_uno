@@ -1,16 +1,16 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { storageAccessTokenKey } from "../data_services/CustomAxios";
 
 function ProtectedRoutes() {
-  return (
-    <>
-      {localStorage.getItem(storageAccessTokenKey) ? (
-        <Outlet />
-      ) : (
-        <Navigate to="/login/" />
-      )}
-    </>
-  );
+  const location = useLocation();
+  
+  if (!localStorage.getItem(storageAccessTokenKey)) {
+    // Save the current path before redirecting
+    localStorage.setItem("redirectPath", location.pathname);
+    return <Navigate to="/login/" />;
+  }
+  
+  return <Outlet />;
 }
 
 export default ProtectedRoutes;

@@ -14,13 +14,17 @@ class RoomViewSet(ModelViewSet):
     queryset = Room.objects.all()
 
     def create(self, request):
-        print(request.data)
-        room = Room()
-        room.from_dict(request.data)
-        room.save()
-        room.add_user(request.user, force=True)
+        try :
+            room = Room()
+            room.from_dict(request.data)
+            room.save()
+            room.add_user(request.user, force=True)
+
+            return Response(room.to_dict(), status=status.HTTP_201_CREATED)
         
-        return Response(room.to_dict(), status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
     
     def update(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
@@ -41,17 +45,26 @@ class RoomViewSet(ModelViewSet):
         room = get_object_or_404(Room, pk=pk)
         if request.user not in room.users.all():
             return Response({"error": "You are not in this room"}, status=status.HTTP_403_FORBIDDEN)
-        return Response(room.to_dict(), status=status.HTTP_200_OK)
+        return Response(room.private_to_dict(), status=status.HTTP_200_OK)
     
     def join(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
-        request.user.room = room
-        request.user.save()
+        # if the user was invited, we can force join the room
+        try :
+            if request.data.get("code") and request.data.get("code") == room.invitation_code:
+                room.add_user(request.user, force=True)
+            else :
+                room.add_user(request.user, force=False)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(room.to_dict(), status=status.HTTP_200_OK)
 
     def leave(self, request, pk):
-        request.user.room = None
-        request.user.save()
+        room = get_object_or_404(Room, pk=pk)
+        try:
+            room.remove_user(request.user)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ChatViewSet(ModelViewSet):

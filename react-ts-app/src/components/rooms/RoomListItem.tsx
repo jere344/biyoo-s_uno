@@ -50,6 +50,7 @@ export default function RoomListItem({ room }: RoomProps) {
   
   const occupancyPercentage = (room.users.length / room.player_limit) * 100;
   const isRoomFull = room.users.length >= room.player_limit;
+  const canJoinRoom = !isRoomFull && room.is_open;
   
   // Format creation time
   const createdAt = new Date(room.created_at);
@@ -126,10 +127,10 @@ export default function RoomListItem({ room }: RoomProps) {
           }}
         >
           <Chip
-            icon={isRoomFull ? <PersonAddDisabledIcon /> : <PersonAddIcon />}
-            label={isRoomFull ? "Complet" : "Disponible"}
+            icon={!canJoinRoom ? <PersonAddDisabledIcon /> : <PersonAddIcon />}
+            label={!room.is_open ? "Fermée" : isRoomFull ? "Complet" : "Ouverte"}
             sx={{
-              backgroundColor: isRoomFull ? "#b71c1c" : "#2e7d32",
+              backgroundColor: !canJoinRoom ? "#b71c1c" : "#2e7d32",
               color: "#fff",
               fontWeight: "bold",
               borderRadius: "20px",
@@ -202,7 +203,7 @@ export default function RoomListItem({ room }: RoomProps) {
                 borderRadius: 5,
                 backgroundColor: 'rgba(255,255,255,0.2)',
                 '& .MuiLinearProgress-bar': {
-                  backgroundColor: isRoomFull ? '#b71c1c' : '#4caf50',
+                  backgroundColor: !canJoinRoom ? '#b71c1c' : '#4caf50',
                   borderRadius: 5,
                 },
               }}
@@ -274,22 +275,22 @@ export default function RoomListItem({ room }: RoomProps) {
               <Button 
                 variant="contained" 
                 onClick={handleJoinRoom}
-                disabled={isRoomFull || isJoining}
-                startIcon={isRoomFull ? <LockIcon /> : <LoginIcon />}
+                disabled={!canJoinRoom || isJoining}
+                startIcon={!canJoinRoom ? <LockIcon /> : <LoginIcon />}
                 sx={{
-                  background: isRoomFull 
+                  background: !canJoinRoom 
                     ? "rgba(0,0,0,0.3)" 
                     : "linear-gradient(45deg, #42a5f5 30%, #1976d2 90%)",
                   color: "white",
                   fontWeight: "bold",
                   borderRadius: "25px",
                   padding: "10px 20px",
-                  boxShadow: isRoomFull ? "none" : "0 4px 15px rgba(25, 118, 210, 0.5)",
+                  boxShadow: !canJoinRoom ? "none" : "0 4px 15px rgba(25, 118, 210, 0.5)",
                   textTransform: "uppercase",
                   border: "2px solid rgba(255,255,255,0.2)"
                 }}
               >
-                {isJoining ? "En cours..." : (isRoomFull ? "Complet" : "Rejoindre")}
+                {isJoining ? "En cours..." : (!room.is_open ? "Fermée" : isRoomFull ? "Complet" : "Rejoindre")}
               </Button>
             </motion.div>
           </Box>

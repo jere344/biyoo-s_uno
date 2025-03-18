@@ -9,6 +9,7 @@ class Room(models.Model):
     created_at:datetime = models.DateTimeField(auto_now_add=True, verbose_name="créé le")
     player_limit:int = models.IntegerField(default=8, verbose_name="limite de joueurs")
     is_open:bool = models.BooleanField(default=True, verbose_name="ouverte")
+    invitation_code:str = models.CharField(max_length=10, verbose_name="code d'invitation", unique=True)
     
     def __str__(self):
         return f"{self.name}"
@@ -17,6 +18,26 @@ class Room(models.Model):
         verbose_name = "salle"
         verbose_name_plural = "salles"
         ordering = ['name']
+    
+    def private_to_dict(self) -> dict:
+        if not self.id:
+            return {}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "player_limit": self.player_limit,
+            "is_open": self.is_open,
+            "users": [
+                {
+                    "id": user.id,
+                    "username": user.username,
+                    "profile_picture": f"{settings.MEDIA_FULL_URL}{user.profile_picture}" if user.profile_picture else None
+                }
+                for user in self.users.all()
+            ],
+            "created_at": self.created_at,
+            "invitation_code": self.invitation_code,
+        }
     
     def to_dict(self) -> dict:
         if not self.id:
@@ -37,6 +58,14 @@ class Room(models.Model):
             "created_at": self.created_at,
         }
     
+    def generate_invitation_code(self) -> str:
+        """
+        Generate a random invitation code
+        """
+        import random
+        import string
+        return "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    
     def from_dict(self, data:dict) -> None:
         """
         Update the Room instance with the data from the dictionary
@@ -44,11 +73,14 @@ class Room(models.Model):
         self.name = data.get("name", self.name)
         self.player_limit = data.get("player_limit", self.player_limit)
         self.is_open = data.get("is_open", self.is_open)
+        self.invitation_code = data.get(self.invitation_code, self.generate_invitation_code())
     
     def add_user(self, user:CustomUser, force: bool) -> None:
         """
         Add a user to the room
         """
+        if user.room == self:
+            return
         if self.users.count() >= self.player_limit:
             raise ValueError("The room is full")
         if self.is_open == False and force == False:

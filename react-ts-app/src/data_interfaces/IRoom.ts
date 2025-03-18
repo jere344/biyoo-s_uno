@@ -7,4 +7,5 @@ export default interface IRoom {
   player_limit: number,
   is_open: boolean,
   created_at: string,
+  invitation_code?: string
 }

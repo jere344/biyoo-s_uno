@@ -45,7 +45,14 @@ function LoginView() {
     const submitLogin = (data: FormLoginFields) => {
         UserDS.login(data.username, data.password)
             .then(() => {
-                navigate("/");
+                // Check if there's a saved path to redirect to
+                const redirectPath = localStorage.getItem("redirectPath");
+                if (redirectPath) {
+                    localStorage.removeItem("redirectPath"); // Clear the saved path
+                    navigate(redirectPath);
+                } else {
+                    navigate("/");
+                }
             })
             .catch((err) => {
                 if (err.response.status === 401 && err.response.data === "no_active_account") {
