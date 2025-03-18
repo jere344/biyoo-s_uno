@@ -13,9 +13,9 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ myPlayer, isMyTurn, onPlayCard 
     if (typeof myPlayer.hand === 'number') return;
     const [animatingCardId, setAnimatingCardId] = useState<number | null>(null);
     
-    const totalWidth = 7;
+    const totalWidth = Math.min(7, myPlayer.hand.length);
 
-    const cardWidth = Math.min(totalWidth / myPlayer.hand.length, 1);
+    const cardWidth = totalWidth / myPlayer.hand.length;
 
     const startX = -totalWidth / 2 + cardWidth / 2;
     const superpose_offset = 0.001;
