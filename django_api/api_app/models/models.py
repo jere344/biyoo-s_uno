@@ -45,13 +45,13 @@ class Room(models.Model):
         self.player_limit = data.get("player_limit", self.player_limit)
         self.is_open = data.get("is_open", self.is_open)
     
-    def add_user(self, user:CustomUser) -> None:
+    def add_user(self, user:CustomUser, force: bool) -> None:
         """
         Add a user to the room
         """
         if self.users.count() >= self.player_limit:
             raise ValueError("The room is full")
-        if self.is_open == False:
+        if self.is_open == False and force == False:
             raise ValueError("The room is closed")
         user.room = self
         user.save()

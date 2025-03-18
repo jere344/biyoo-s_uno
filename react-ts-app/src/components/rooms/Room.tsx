@@ -45,21 +45,21 @@ export default function Room() {
     }, [navigate, id]);
 
      // Refresh the room every 60 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (!id) return;
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         if (!id) return;
 
-            RoomDS.getOne(parseInt(id, 10))
-                .then((response) => {
-                    setRoom(response.data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching room:", error);
-                });
-        }, 5000);
+    //         RoomDS.getOne(parseInt(id, 10))
+    //             .then((response) => {
+    //                 setRoom(response.data);
+    //             })
+    //             .catch((error) => {
+    //                 console.error("Error fetching room:", error);
+    //             });
+    //     }, 5000);
 
-        return () => clearInterval(interval);
-    }, [id]);
+    //     return () => clearInterval(interval);
+    // }, [id]);
 
     const [editingName, setEditingName] = useState(false);
     const [newRoomName, setNewRoomName] = useState(room.name);

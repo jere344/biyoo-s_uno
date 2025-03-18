@@ -18,7 +18,7 @@ class RoomViewSet(ModelViewSet):
         room = Room()
         room.from_dict(request.data)
         room.save()
-        room.add_user(request.user)
+        room.add_user(request.user, force=True)
         
         return Response(room.to_dict(), status=status.HTTP_201_CREATED)
     

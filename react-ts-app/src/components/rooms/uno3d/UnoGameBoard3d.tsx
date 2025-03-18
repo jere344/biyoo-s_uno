@@ -180,7 +180,7 @@ const UnoGameBoard3d: React.FC<UnoGameBoard3dProps> = ({
                     <OrbitControls
                         enableZoom={true}
                         minDistance={3}
-                        maxDistance={12}
+                        maxDistance={22}
                         minPolarAngle={Math.PI / 6}
                         maxPolarAngle={Math.PI / 2}
                     />

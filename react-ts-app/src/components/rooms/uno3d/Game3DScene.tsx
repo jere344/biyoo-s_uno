@@ -39,7 +39,8 @@ const Game3DScene: React.FC<Game3DSceneProps> = (
 
     return (
         <>
-            <Environments environment="city"/>
+            <Environments environment={myPlayer ? myPlayer.game_environment.name : "default"} />
+            {/* <Environments environment="hut" /> */}
 
             {/* Current card in play - uses the delayed state */}
             {delayedCurrentCard && (

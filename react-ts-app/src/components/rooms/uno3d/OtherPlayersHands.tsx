@@ -9,15 +9,26 @@ import { TextureLoader } from "three";
 // import gt from "./gt.json";
 import font from "@assets/fonts/Roboto-Black_Regular.json";
 
+interface ProfilePictureProps {
+    imageUrl: string;
+    position: [number, number, number];
+    rotation: [number, number, number];
+}
+
 // Profile Picture Component
-const ProfilePicture = ({ imageUrl, position, rotation }) => {
-    const texture = useLoader(TextureLoader, imageUrl);
-    return (
-        <mesh position={position} rotation={rotation}>
-            <circleGeometry args={[0.6, 32]} />
-            <meshBasicMaterial map={texture} />
-        </mesh>
-    );
+const ProfilePicture = ({ imageUrl, position, rotation }: ProfilePictureProps) => {
+    try {
+        const texture = useLoader(TextureLoader, imageUrl);
+        return (
+            <mesh position={position} rotation={rotation}>
+                <circleGeometry args={[0.6, 32]} />
+                <meshBasicMaterial map={texture} />
+            </mesh>
+        );
+    }
+    catch (e) {
+        return null;
+    }
 };
 
 interface OtherPlayersHandsProps {

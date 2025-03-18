@@ -1,8 +1,9 @@
 import React from "react";
+import IUnoCard from "@DI/IUnoCard";
 import { Box, Tooltip } from "@mui/material";
 
 interface UnoGameCardProps {
-    card: UnoCard;
+    card: IUnoCard;
     modifier?: "default" | "highlight" | "darken";
     isPlayable?: boolean;
     onClick?: () => void;
@@ -41,10 +42,6 @@ export const UnoGameCard: React.FC<UnoGameCardProps> = ({
         boxShadow: highlight ? "0 4px 8px rgba(255, 215, 0, 0.3)" : "0 2px 4px rgba(0, 0, 0, 0.1)",
         transition: "transform 0.2s, box-shadow 0.2s, filter 0.2s",
         filter: darken ? "brightness(60%)" : "brightness(100%)", // Darken non-playable cards
-        "&:hover": {
-            transform: highlight ? "translateY(-10px)" : "none",
-            boxShadow: highlight ? "0 8px 16px rgba(255, 215, 0, 0.5)" : "0 2px 4px rgba(0, 0, 0, 0.1)",
-        },
     };
 
     // Card description for tooltip
