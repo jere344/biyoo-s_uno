@@ -26,6 +26,15 @@ class CustomUser(AbstractUser):
     def game_environment(self):
         active_game_env = self.game_environment_inventory.filter(is_active=True).first()
         return active_game_env.game_environment if active_game_env else None
+    
+    @property
+    def profile_effect(self):
+        active_effect = self.profile_effect_inventory.filter(is_active=True).first()
+        return active_effect.profile_effect if active_effect else None
+
+    @property
+    def active_profile_effects(self):
+        return self.profile_effect_inventory.filter(is_active=True).all()
 
     def to_dict(self) -> dict:
         return {
@@ -38,6 +47,7 @@ class CustomUser(AbstractUser):
             'games_won': self.games_won,
             'is_online': self.is_online,
             'last_activity': self.last_activity.isoformat(),
+            'profile_effect': self.profile_effect.name if self.profile_effect else "default",
         }
     
     def to_dict_public(self) -> dict:
@@ -47,6 +57,8 @@ class CustomUser(AbstractUser):
             "profile_picture": f"{settings.MEDIA_FULL_URL}{self.profile_picture}" if self.profile_picture else None,
             'games_played': self.games_played,
             'games_won': self.games_won,
+            'profile_effect': self.profile_effect.name if self.profile_effect else "default",
+            'is_online': self.is_online,
         }
 
 

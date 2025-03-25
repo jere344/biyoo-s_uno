@@ -71,3 +71,19 @@ class GameEnvironmentInventoryAdmin(admin.ModelAdmin):
     list_display = ['user', 'game_environment', 'is_active']
 
 admin.site.register(GameEnvironmentInventory, GameEnvironmentInventoryAdmin)
+
+from .models.shop import ProfileEffect, ProfileEffectInventory
+
+    
+class ProfileEffectAdmin(admin.ModelAdmin):
+    list_display = ['name', 'price', 'description']
+    search_fields = ['name']
+    ordering = ['name']
+    fields = ['name', 'price', 'description']
+
+admin.site.register(ProfileEffect, ProfileEffectAdmin)
+
+class ProfileEffectInventoryAdmin(admin.ModelAdmin):
+    list_display = ['user', 'profile_effect', 'is_active']
+
+admin.site.register(ProfileEffectInventory, ProfileEffectInventoryAdmin)
