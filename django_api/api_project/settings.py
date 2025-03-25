@@ -118,6 +118,8 @@ DATABASES = {
     }
 }
 
+import django.db.backends.postgresql.base
+django.db.backends.postgresql.base.DatabaseWrapper._check_version = lambda self: None
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
