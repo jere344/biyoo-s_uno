@@ -4,3 +4,4 @@ node_modules/
 profile_pictures/
 game_environments/
 card_back/
+.env

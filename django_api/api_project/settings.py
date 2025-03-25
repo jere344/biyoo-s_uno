@@ -32,12 +32,12 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
 
-ALLOWED_HOSTS = ["*"]
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://172.28.32.100:5173',
-]
+# Get ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
+# Get CORS settings from environment variables
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_URLS_REGEX = os.getenv('CORS_URLS_REGEX', r'^/.*$')
 
 # Application definition
 
@@ -176,7 +176,7 @@ REST_FRAMEWORK = {
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_URLS_REGEX = r"^/.*$"
+CORS_URLS_REGEX = os.getenv('CORS_URLS_REGEX', r'^/.*$')
 
 
 AUTH_USER_MODEL = "auth_app.CustomUser"

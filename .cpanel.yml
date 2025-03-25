@@ -1,0 +1,26 @@
+---
+deployment:
+  tasks:
+    - echo "starting deployment"
+    - export DJANGO_VENV_PATH=$HOME/virtualenv/biyoo_uno_api_application/3.12/bin/activate
+    - export DJANGO_PATH=$HOME/biyoo_uno_api_application
+    - export REP_DJANGO_PATH=$HOME/repositories/biyoo_uno/django_api
+
+    - export REACT_PATH=$HOME/biyoo_uno_frontend
+    - export REP_REACT_PATH=$HOME/repositories/biyoo_uno/react-ts-app
+
+    # copy from the repository to the deployment folder
+    - rsync -av $REP_DJANGO_PATH/ $DJANGO_PATH
+
+    # setup python environment
+    - source $DJANGO_VENV_PATH
+    - pip install -r $DJANGO_PATH/requirements.txt
+    - python3 $DJANGO_PATH/manage.py migrate
+    - python3 $DJANGO_PATH/manage.py collectstatic --noinput
+
+    # setup react environment
+    # we build in local and push the build folder to the server
+    # so we just move the build folder to the public folder
+    # - rsync -av --delete $REP_REACT_PATH/dist/ $REACT_PATH
+    # - chmod -R 755 $REACT_PATH
+    # - cp $REP_REACT_PATH/.htaccess $REACT_PATH
