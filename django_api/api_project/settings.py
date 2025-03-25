@@ -109,20 +109,17 @@ WSGI_APPLICATION = "api_project.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.mysql'),
         'NAME': os.getenv('DB_NAME', 'uno-biyoo'),
-        'USER': os.getenv('DB_USER', 'postgres'),
+        'USER': os.getenv('DB_USER', 'root'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
-
-from django.db.backends.postgresql import base
-original_check = base.DatabaseWrapper.check_database_version_supported
-def patched_check(self):
-    return True
-base.DatabaseWrapper.check_database_version_supported = patched_check
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
