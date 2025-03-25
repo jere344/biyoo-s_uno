@@ -10,7 +10,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Avatar,
     Chip,
     ToggleButtonGroup,
     ToggleButton,
@@ -27,6 +26,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LeaderboardDS from "../data_services/LeaderboardDS";
 import { IPublicUser } from "../data_interfaces/IUser";
 import { useUser } from "../hooks/useUser";
+import CustomAvatar from "@components/customAvatar/CustomAvatar";
 
 // Medal colors
 const MEDALS = {
@@ -323,12 +323,8 @@ const Leaderboard: React.FC = () => {
                                                 </motion.div>
 
                                                 {/* Avatar */}
-                                                <Avatar
-                                                    alt={player.username}
-                                                    src={player.profile_picture || undefined}
+                                                <CustomAvatar user={player} size={rank === 1 ? 100 : 80}
                                                     sx={{
-                                                        width: rank === 1 ? 100 : 80,
-                                                        height: rank === 1 ? 100 : 80,
                                                         border: `4px solid ${medalInfo.color}`,
                                                         boxShadow: `0 0 20px ${medalInfo.color}80`,
                                                         mb: 2,
@@ -543,13 +539,10 @@ const Leaderboard: React.FC = () => {
                                                         </TableCell>
                                                         <TableCell>
                                                             <Box sx={{ display: "flex", alignItems: "center" }}>
-                                                                <Avatar
-                                                                    alt={player.username}
-                                                                    src={player.profile_picture || undefined}
+                                                                <CustomAvatar
+                                                                    user={player}
+                                                                    size={40}
                                                                     sx={{
-                                                                        width: 40,
-                                                                        height: 40,
-                                                                        mr: 2,
                                                                         border: isCurrentUser
                                                                             ? "2px solid gold"
                                                                             : "none",
@@ -558,6 +551,7 @@ const Leaderboard: React.FC = () => {
                                                                 <Typography
                                                                     sx={{
                                                                         color: "white",
+                                                                        ml: 2,
                                                                         fontWeight: isCurrentUser ? "bold" : "normal",
                                                                     }}
                                                                 >

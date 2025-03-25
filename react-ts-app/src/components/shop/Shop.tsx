@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Container, Box, Chip, Paper } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import { motion, AnimatePresence } from "framer-motion";
@@ -132,7 +132,26 @@ const AnimatedTab = ({
 
 const Shop: React.FC = () => {
     const { user } = useUser();
-    const [activeTab, setActiveTab] = useState("0");
+    const [activeTab, setActiveTab] = useState(() => {
+        try {
+            // Try to get saved tab from localStorage, default to "0" if not found
+            const savedTab = localStorage.getItem("shopActiveTab");
+            return savedTab || "0";
+        } catch (error) {
+            // In case localStorage is not available (e.g., incognito mode)
+            return "0";
+        }
+    });
+
+    // Save active tab to localStorage whenever it changes
+    useEffect(() => {
+        try {
+            localStorage.setItem("shopActiveTab", activeTab);
+        } catch (error) {
+            // Silently fail if localStorage is not available
+            console.log("Could not save active tab to localStorage");
+        }
+    }, [activeTab]);
 
     const handleTabChange = (newValue: string) => {
         setActiveTab(newValue);
@@ -413,7 +432,7 @@ const Shop: React.FC = () => {
                                 }}
                             >
                                 <TabPanel value="0" sx={{ p: 3, width: "100%" }}>
-                                    <CardBacks />
+                                    <CardBacks userCardsCurrency={user?.cards_currency || 0} />
                                 </TabPanel>
 
                                 <TabPanel value="1" sx={{ p: 3, width: "100%" }}>
@@ -421,7 +440,7 @@ const Shop: React.FC = () => {
                                 </TabPanel>
 
                                 <TabPanel value="2" sx={{ p: 3, width: "100%" }}>
-                                    <GameEnvironments />
+                                    <GameEnvironments userCardsCurrency={user?.cards_currency || 0} />
                                 </TabPanel>
                             </Paper>
                         </motion.div>

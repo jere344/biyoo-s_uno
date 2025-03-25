@@ -37,6 +37,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             try {
                 const message = JSON.parse(event.data);
                 if (message.type === "user_data" || message.type === "user_update") {
+                    console.log("Received user data");
                     // Transform snake_case to camelCase for React
                     const userData = message.data;
                     setUser(userData);

@@ -1,16 +1,16 @@
 import React from "react";
 import { Grid, Card, Box, CardMedia, CardContent, Typography, Button, Tooltip } from "@mui/material";
 import { motion } from "framer-motion";
-import ICardBack from "@DI/ICardBack";
+import ICardBackInventory from "@DI/ICardBackInventory.ts";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 interface InventoryCardBackItemProps {
-    item: ICardBack;
+    item: ICardBackInventory;
     activateCardBack: (id: number) => void;
 }
 
-const InventoryCardBackItemProps: React.FC<ShopCardBackItemProps> = ({ item, activateCardBack }) => {
+const InventoryCardBackItemProps: React.FC<InventoryCardBackItemProps> = ({ item, activateCardBack }) => {
     return (
         <Grid item xs={12} sm={6} md={4} key={item.id}>
             <motion.div
@@ -105,6 +105,20 @@ const InventoryCardBackItemProps: React.FC<ShopCardBackItemProps> = ({ item, act
                             }}
                         >
                             {item.card_back.name}
+                        </Typography>
+
+                        <Typography 
+                            variant="body2" 
+                            component="p"
+                            sx={{
+                                color: "rgba(255,255,255,0.9)",
+                                textAlign: "center",
+                                mb: 2,
+                                fontStyle: "italic",
+                                textShadow: "1px 1px 3px rgba(0,0,0,0.3)",
+                            }}
+                        >
+                            {item.card_back.description || "No description available"}
                         </Typography>
 
                         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>

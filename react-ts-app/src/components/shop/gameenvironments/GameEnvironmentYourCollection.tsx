@@ -15,7 +15,7 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 
 interface GameEnvironmentYourCollectionProps {
     inventory: IGameEnvironmentInventory[];
-    activateEnvironment: (id: string | number) => void;
+    activateEnvironment: (id: number) => void;
 }
 
 const GameEnvironmentYourCollection: React.FC<GameEnvironmentYourCollectionProps> = ({

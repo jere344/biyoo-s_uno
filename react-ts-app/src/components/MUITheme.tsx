@@ -22,16 +22,6 @@ const getDesignTokens = (mode: PaletteMode) => ({
         fontWeightBold: 700,
     },
     components: {
-        MuiAvatar: {
-            styleOverrides: {
-                root: {
-                    transition: "transform 0.2s ease-in-out",
-                    "&:hover": {
-                        transform: "scale(1.2)",
-                    },
-                },
-            },
-        },
         MuiButton: {
             styleOverrides: {
                 root: {

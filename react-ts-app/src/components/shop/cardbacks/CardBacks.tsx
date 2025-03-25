@@ -15,7 +15,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import ShopDS from "@DS/ShopDS";
 import ICardBack from "@DI/ICardBack";
-import IInventory from "@DI/IInventory";
+import ICardBackInventory from "@DI/ICardBackInventory";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CloseIcon from "@mui/icons-material/Close";
@@ -28,7 +28,7 @@ interface CardBacksProps {
 
 const CardBacks: React.FC<CardBacksProps> = ({ userCardsCurrency }) => {
     const [cardBacks, setCardBacks] = useState<ICardBack[]>([]);
-    const [inventory, setInventory] = useState<IInventory[]>([]);
+    const [inventory, setInventory] = useState<ICardBackInventory[]>([]);
     const [purchaseSuccess, setPurchaseSuccess] = useState(false);
     const [purchaseError, setPurchaseError] = useState<string | null>(null);
     const [newCardBack, setNewCardBack] = useState<ICardBack | null>(null);
@@ -73,7 +73,7 @@ const CardBacks: React.FC<CardBacksProps> = ({ userCardsCurrency }) => {
                 fetchInventory(); // Refresh inventory
             }
         } catch (error: unknown) {
-            setPurchaseError(error.response?.data?.error || "Failed to purchase card back");
+            setPurchaseError(error?.response?.data?.error || "Failed to purchase card back");
             setTimeout(() => setPurchaseError(null), 5000); // Clear error after 5 seconds
         }
     };

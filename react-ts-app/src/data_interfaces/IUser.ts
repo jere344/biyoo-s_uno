@@ -8,7 +8,7 @@ export interface IUser {
     games_played: number;
     games_won: number;
     room_id: number;
-    profile_effect?: string;
+    profile_effect: string;
 }
 
 export interface IPublicUser {
@@ -17,5 +17,5 @@ export interface IPublicUser {
     profile_picture?: string | undefined;
     games_played: number;
     games_won: number;
-    profile_effect?: string;
+    profile_effect: string;
 }

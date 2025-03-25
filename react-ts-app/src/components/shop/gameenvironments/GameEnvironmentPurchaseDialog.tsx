@@ -6,9 +6,9 @@ import CloseIcon from '@mui/icons-material/Close';
 interface GameEnvironmentPurchaseDialogProps {
     purchaseSuccess: boolean;
     newEnvironment: { image: string; name: string } | null;
-    newInventoryId: string | null;
+    newInventoryId: number | null;
     handleCloseSuccessModal: () => void;
-    activateEnvironment: (id: string) => void;
+    activateEnvironment: (id: number) => void;
 }
 
 const GameEnvironmentPurchaseDialog: React.FC<GameEnvironmentPurchaseDialogProps> = ({

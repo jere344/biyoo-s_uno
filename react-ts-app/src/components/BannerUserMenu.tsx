@@ -16,7 +16,6 @@ import {
     MenuItem,
     Tooltip,
     Typography,
-    Avatar,
 } from "@mui/material";
 import {
     InfoOutlined as InfoOutlinedIcon,
@@ -32,7 +31,6 @@ function BannerUserMenu(): React.JSX.Element {
     const navigate: NavigateFunction = useNavigate();
     const [aboutOpen, setAboutOpen] = useState(false);
     const [userAnchorEl, setUserAnchorEl] = useState<HTMLElement | null>(null);
-    const profilePicture = localStorage.getItem("profilePicture");
 
     const handleOpenUserMenu = (e: React.MouseEvent<HTMLElement>) => {
         setUserAnchorEl(e.currentTarget);
@@ -81,20 +79,7 @@ function BannerUserMenu(): React.JSX.Element {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
                             }}
                         >
-                            {
-                                user?.profile_picture ? (
-                                    <CustomAvatar user={user} size={40} showOnlineStatus={true} />
-                                ) : (
-                                    <Avatar 
-                                        alt="Profile picture" 
-                                        src={profilePicture} 
-                                        sx={{ 
-                                            bgcolor: "secondary.main",
-                                            boxShadow: "0 2px 5px rgba(0,0,0,0.2)"
-                                        }}
-                                    />
-                                )
-                            }
+                            <CustomAvatar user={user} size={40} showOnlineStatus={true} />
                         </IconButton>
                     </motion.div>
                 </Tooltip>
