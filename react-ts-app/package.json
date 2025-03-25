@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "whatever": "vite build",
-    "dev-ip": "vite --host 172.28.32.100"
+    "dev-ip": "vite --host 172.28.32.100",
+    "build-prod": "vite build --mode production"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
