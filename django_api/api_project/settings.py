@@ -179,6 +179,7 @@ REST_FRAMEWORK = {
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = os.getenv('CORS_URLS_REGEX', r'^/.*$')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 
 AUTH_USER_MODEL = "auth_app.CustomUser"
