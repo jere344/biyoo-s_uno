@@ -1,19 +1,17 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import IUnoGame from "@DI/IUnoGame";
-import IUnoPlayer from "@DI/IUnoPlayer";
 import IUnoCard from "@DI/IUnoCard";
 import OtherPlayerHand from "./OtherPlayerHand";
+import { useUnoGame } from "@hooks/useUnoGame";
 
-interface OtherPlayersHandsProps {
-    gameState: IUnoGame;
-    myPlayer: IUnoPlayer | null;
-    onDenyUno: (playerId: number) => void;
-}
+const OtherPlayersHands: React.FC = () => {
+    const game = useUnoGame();
+    if (game.gameState === null) return null;
+    const gameState = game.gameState as IUnoGame;
 
-const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlayer, onDenyUno }) => {
     const cardWidth = 0.8;
     const tableRadius = 4; // Distance from center of table
-    const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer?.id);
+    const otherPlayers = game.gameState.players.filter((player) => player.id !== game.myPlayer?.id);
     
     const [animatingPlayerId, setAnimatingPlayerId] = useState<number | null>(null);
     const [animatingCard, setAnimatingCard] = useState<IUnoCard | null>(null);
@@ -63,13 +61,13 @@ const OtherPlayersHands: React.FC<OtherPlayersHandsProps> = ({ gameState, myPlay
                         tableRadius={tableRadius}
                         angle={angle}
                         cardWidth={cardWidth}
-                        onDenyUno={onDenyUno}
                         isAnimating={player.id === animatingPlayerId}
                         isDrawing={player.id === drawingPlayerId}
                         animatingCard={animatingCard}
                         onAnimationComplete={handleAnimationComplete}
                         onDrawingAnimationComplete={handleDrawingAnimationComplete}
-                        cardBackImage={gameState.card_back?.image}
+                        cardBackImage={gameState.card_back?.image} 
+                        onDenyUno={game.denyUno}                 
                     />
                 );
             })}

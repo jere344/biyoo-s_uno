@@ -1,4 +1,5 @@
 import { BehaviorSubject } from "rxjs";
+import IUnoGame from "@DI/IUnoGame";
 
 export class UnoGameWebsocketDS {
     private socket: WebSocket | null = null;
@@ -9,8 +10,8 @@ export class UnoGameWebsocketDS {
     private reconnectTimeout: number | null = null;
 
     // Observable for game state updates
-    public gameState$ = new BehaviorSubject<UnoGame | null>(null);
-    public playerCount$ = new BehaviorSubject<number>(0);
+    public gameState$ = new BehaviorSubject<IUnoGame | null>(null);
+    public connectedCount$ = new BehaviorSubject<number>(0);
     public connectionStatus$ = new BehaviorSubject<"connected" | "disconnected" | "connecting">("disconnected");
     public error$ = new BehaviorSubject<string | null>(null);
 
@@ -45,7 +46,7 @@ export class UnoGameWebsocketDS {
                     this.gameState$.next(data.game);
                 }
                 else if (data.type === "player_count") {
-                    this.playerCount$.next(data.count);
+                    this.connectedCount$.next(data.count);
                 }
                 else if (data.type === "error") {
                     // console.error("TEST 6 : WebSocket error:", data.error);

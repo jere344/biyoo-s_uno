@@ -1,45 +1,50 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { Text } from "@react-three/drei";
 import UnoCard3D from "./UnoCard3D";
+import * as THREE from "three";
+import { useUnoGame } from "@hooks/useUnoGame";
 
 interface DrawPileProps {
-    cardBack: {
-        image: string;
-    };
     position: [number, number, number];
-    onClick?: () => void;
-    isPlayable: boolean;
 }
 
-const DrawPile: React.FC<DrawPileProps> = ({ cardBack, position, onClick, isPlayable }) => {
+const DrawPile: React.FC<DrawPileProps> = ({ position }) => {
+    const game = useUnoGame();
+    if (game.gameState === null) return null; // Handle loading state
     const pileRef = useRef<THREE.Group>();
-    const scale = [1, 1.5, 0.01];
+    const scale: [number, number, number] = [1, 1.5, 0.01];
 
     // Generate cards array outside the render
     const dummyCards = Array.from({ length: 14 }, (_, i) => {
-            const index = i;
-            const offset = index * 0.01;
+        const index = i;
+        const offset = index * 0.01;
 
-            return (
-                <mesh key={index} position={[0, offset, 0]} scale={scale} rotation={[-Math.PI / 2, 0, 0]}>
-                    <boxGeometry />
-                    <meshStandardMaterial color="#2a2a2a" />
-                </mesh>
-            );
-        });
-
+        return (
+            <mesh key={index} position={[0, offset, 0]} scale={scale} rotation={[-Math.PI / 2, 0, 0]}>
+                <boxGeometry />
+                <meshStandardMaterial color="#2a2a2a" />
+            </mesh>
+        );
+    });
 
     return (
         <group ref={pileRef} position={position}>
             {/* top card using UnoCard3D component with click handler */}
-            <UnoCard3D 
-                card={cardBack}
+            <UnoCard3D
+                card={{
+                    id: -1,
+                    image: game.gameState.card_back.image || "",
+                }}
                 position={[0, 0.15, 0]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={[1, 1, 0.1]}
-                isPlayable={isPlayable}
-                onClick={onClick}
-                isMyTurn={isPlayable} // Using isPlayable to determine if it's the player's turn
+                isPlayable={game.isMyTurn}
+                onClick={() => {
+                    if (game.isMyTurn) {
+                        game.drawCard();
+                    }
+                }}
+                isMyTurn={game.isMyTurn}
             />
             {dummyCards}
             <Text

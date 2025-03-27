@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Container, Typography, Box, Avatar } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import PeopleIcon from "@mui/icons-material/People";
@@ -9,11 +9,17 @@ import RoomDS from "@DS/RoomDS";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Chat from "./Chat";
-import UnoGame from "./UnoGame";
 import RoomHeader from "./RoomHeader";
 import { motion, AnimatePresence } from "framer-motion";
+import UnoGameCanvas from "@components/unogame/UnoGameCanvas";
+import { UnoGameProvider } from "../../contexts/UnoGameContext";
+import { storageAccessTokenKey } from "@DS/CustomAxios";
 
 export default function Room() {
+    const token = localStorage.getItem(storageAccessTokenKey) || "";
+    if (!token) {
+        window.location.href = "/login/";
+    }
     const { id } = useParams();
     const [room, setRoom] = useState<IRoom>({
         id: 0,
@@ -244,7 +250,9 @@ export default function Room() {
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.3 }}
                         >
-                            <UnoGame />
+                            <UnoGameProvider roomId={room.id} token={token}>
+                                <UnoGameCanvas />
+                            </UnoGameProvider>
                         </motion.div>
                     </Grid>
                     

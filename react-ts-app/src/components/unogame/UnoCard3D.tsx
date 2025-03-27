@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import IUnoCard from "../../../data_interfaces/IUnoCard";
+import IUnoCard from "@DI/IUnoCard";
 
 interface UnoCard3DProps {
     card: IUnoCard;
@@ -50,8 +50,8 @@ const UnoCard3D: React.FC<UnoCard3DProps> = ({
     }, []);
 
     // Start with the default texture
-    const [texture, setTexture] = useState(defaultTexture);
-    const [cardBackTexture, setCardBackTexture] = useState(defaultTexture);
+    const [texture, setTexture] = useState<THREE.Texture>(defaultTexture);
+    const [cardBackTexture, setCardBackTexture] = useState<THREE.Texture>(defaultTexture);
 
     // Load the card image texture and update state when done
     useEffect(() => {

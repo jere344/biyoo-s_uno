@@ -175,7 +175,7 @@ class UnoGameService:
         )
         self.game.current_card = card
         player.hand.remove(card)
-        player.save()
+        
         if "reverse" in card.action:
             self.game.direction = not self.game.direction
         if "+2" in card.action:
@@ -195,6 +195,7 @@ class UnoGameService:
                 raise Exception("You must specify a color")
             self.game.current_card = UnoCard.objects.get(is_special=True, color=color, action=card.action)
 
+        player.save()
         self.finish_turn()
         
         player.user.cards_currency += 1

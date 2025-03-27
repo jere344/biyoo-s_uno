@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { IUser } from '../models/IUser';
+import { IUser } from '@DI/IUser';
 
 interface UserContextType {
     user: IUser | null;

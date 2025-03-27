@@ -60,7 +60,6 @@ const FlameElement = styled(Box)((props: { delay: number, size: number, position
 }));
 
 export const FireEffect: React.FC<{ children: React.ReactNode; size: number }> = ({ children, size }) => {
-  console.log("FireEffect");
   return (
     <FireContainer size={size}>
       {/* The actual avatar */}
