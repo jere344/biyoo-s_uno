@@ -5,9 +5,8 @@ import { useUnoGame } from "@hooks/useUnoGame";
 import ColorPicker from "./ColorPicker.tsx";
 
 const PlayerHand: React.FC = () => {
-    const game = useUnoGame();
-    const myPlayer = game.myPlayer;
-    if (game.gameState === null || myPlayer === undefined || !Array.isArray(myPlayer.hand)) return null;
+    const { myPlayer, gameState, isMyTurn, playCard, soundManager } = useUnoGame();
+    if (gameState === null || myPlayer === undefined || !Array.isArray(myPlayer.hand)) return null;
     const myPlayerHand: IUnoCard[] = myPlayer.hand;
 
     const [animatingCardId, setAnimatingCardId] = useState<number | null>(null);
@@ -47,18 +46,27 @@ const PlayerHand: React.FC = () => {
     const handleAnimationComplete = useCallback(() => {
         if (animatingCardId !== null) {
             // Pass the selected color directly to playCard
-            game.playCard(animatingCardId, selectedColor);
+            soundManager.playSoundEffect("cardPlay");
+            const card = myPlayerHand.find(c => c.id === animatingCardId);
+            if (card && card.action && card.action.includes('skip')) {
+                soundManager.playSoundEffect("skipCard");
+            }
+            if (card && card.action && card.action.includes('reverse')) {
+                soundManager.playSoundEffect("reverseCard");
+            }
+
+            playCard(animatingCardId, selectedColor);
             setAnimatingCardId(null);
             setSelectedCardId(null);
             setSelectedColor(undefined);
         }
-    }, [animatingCardId, game, selectedColor]);
+    }, [animatingCardId, playCard, selectedColor]);
 
     return (
         <>
             {myPlayerHand.map((card: IUnoCard, index: number) => {
                 const x = startX + index * cardWidth;
-                const isPlayable = game.isMyTurn && card.can_play;
+                const isPlayable = isMyTurn && card.can_play;
                 const isAnimating = card.id === animatingCardId;
 
                 return (
@@ -71,7 +79,7 @@ const PlayerHand: React.FC = () => {
                         scale={isAnimating ? [1.5, 1.5, 0.1] : [1, 1, 0.1]}
                         onClick={() => handlePlayCard(card.id)}
                         isPlayable={isPlayable && !isAnimating}
-                        isMyTurn={game.isMyTurn}
+                        isMyTurn={isMyTurn}
                         originalPosition={isAnimating ? [x, 0.7, 4.5 + superpose_offset * index] : null}
                         originalRotation={isAnimating ? [-0.7, 0, 0] : null}
                         originalScale={isAnimating ? [1, 1, 0.1] : null}

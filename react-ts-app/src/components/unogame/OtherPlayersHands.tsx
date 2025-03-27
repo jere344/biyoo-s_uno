@@ -1,17 +1,15 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import IUnoGame from "@DI/IUnoGame";
 import IUnoCard from "@DI/IUnoCard";
 import OtherPlayerHand from "./OtherPlayerHand";
 import { useUnoGame } from "@hooks/useUnoGame";
 
 const OtherPlayersHands: React.FC = () => {
-    const game = useUnoGame();
-    if (game.gameState === null) return null;
-    const gameState = game.gameState as IUnoGame;
+    const { gameState, myPlayer, denyUno } = useUnoGame();
+    if (gameState === null) return null;
 
     const cardWidth = 0.8;
     const tableRadius = 4; // Distance from center of table
-    const otherPlayers = game.gameState.players.filter((player) => player.id !== game.myPlayer?.id);
+    const otherPlayers = gameState.players.filter((player) => player.id !== myPlayer?.id);
     
     const [animatingPlayerId, setAnimatingPlayerId] = useState<number | null>(null);
     const [animatingCard, setAnimatingCard] = useState<IUnoCard | null>(null);
@@ -67,7 +65,7 @@ const OtherPlayersHands: React.FC = () => {
                         onAnimationComplete={handleAnimationComplete}
                         onDrawingAnimationComplete={handleDrawingAnimationComplete}
                         cardBackImage={gameState.card_back?.image} 
-                        onDenyUno={game.denyUno}                 
+                        onDenyUno={denyUno}                 
                     />
                 );
             })}

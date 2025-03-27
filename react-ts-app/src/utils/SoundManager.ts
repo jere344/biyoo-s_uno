@@ -22,7 +22,7 @@ export class SoundManager {
   private soundEffects: Map<string, HTMLAudioElement> = new Map();
   private currentTheme: string = 'default';
   private isMusicPlaying: boolean = false;
-  private musicVolume: number = 0.5; // Default music volume
+  private musicVolume: number = 0.2; // Default music volume
   private effectsVolume: number = 0.7; // Default sound effects volume
   private themes: Record<string, ThemeAudioPaths> = {
     default: {
@@ -182,5 +182,34 @@ export class SoundManager {
   // Get current sound effects volume
   getSoundEffectsVolume(): number {
     return this.effectsVolume;
+  }
+
+  private debugIntervalId: number | null = null;
+  
+  // Start playing random sound effects for volume debugging
+  startRandomSoundDebug(intervalMs: number = 5000): void {
+    if (this.debugIntervalId !== null) {
+      this.stopRandomSoundDebug(); // Clear existing interval if any
+    }
+    
+    this.debugIntervalId = window.setInterval(() => {
+      const effectTypes = Object.keys(this.themes[this.currentTheme].effects) as SoundEffectType[];
+      if (effectTypes.length > 0) {
+        const randomEffect = effectTypes[Math.floor(Math.random() * effectTypes.length)];
+        console.log(`Debug: Playing random sound effect: ${randomEffect}`);
+        this.playSoundEffect(randomEffect);
+      }
+    }, intervalMs);
+    
+    console.log(`Sound debug started: Playing random effects every ${intervalMs/1000} seconds`);
+  }
+  
+  // Stop debug sound effects
+  stopRandomSoundDebug(): void {
+    if (this.debugIntervalId !== null) {
+      window.clearInterval(this.debugIntervalId);
+      this.debugIntervalId = null;
+      console.log('Sound debug stopped');
+    }
   }
 }
