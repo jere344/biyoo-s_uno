@@ -14,7 +14,7 @@ const PlayerHand: React.FC = () => {
     const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
     const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
 
-    const totalWidth = Math.min(7, myPlayerHand.length * 0.5);
+    const totalWidth = Math.min(7, myPlayerHand.length);
 
     const cardWidth = totalWidth / myPlayerHand.length;
 
