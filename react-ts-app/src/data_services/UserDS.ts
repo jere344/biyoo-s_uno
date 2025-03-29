@@ -48,6 +48,9 @@ const save = (user: IUser): Promise<AxiosResponse<IUser>> => {
   const formData = new FormData();
   formData.append('email', user.email);
   formData.append('username', user.username);
+  if (user.roblox_username !== undefined) {
+    formData.append('roblox_username', user.roblox_username);
+  }
   if (user.profile_picture) {
     formData.append('profile_picture', user.profile_picture);
   }

@@ -16,6 +16,7 @@ class CustomUser(AbstractUser):
     games_won = models.IntegerField(default=0)
     is_online = models.BooleanField(default=False)
     last_activity = models.DateTimeField(auto_now=True)
+    roblox_username = models.CharField(max_length=50, null=True, blank=True)
 
     @property
     def card_back(self):
@@ -48,6 +49,7 @@ class CustomUser(AbstractUser):
             'is_online': self.is_online,
             'last_activity': self.last_activity.isoformat(),
             'profile_effect': self.profile_effect.name if self.profile_effect else "default",
+            'roblox_username': self.roblox_username,
         }
     
     def to_dict_public(self) -> dict:
@@ -59,6 +61,7 @@ class CustomUser(AbstractUser):
             'games_won': self.games_won,
             'profile_effect': self.profile_effect.name if self.profile_effect else "default",
             'is_online': self.is_online,
+            'roblox_username': self.roblox_username,
         }
 
 

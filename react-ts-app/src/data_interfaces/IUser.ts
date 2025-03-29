@@ -9,6 +9,7 @@ export interface IUser {
     games_won: number;
     room_id: number;
     profile_effect: string;
+    roblox_username?: string | undefined;
 }
 
 export interface IPublicUser {
@@ -18,4 +19,5 @@ export interface IPublicUser {
     games_played: number;
     games_won: number;
     profile_effect: string;
+    roblox_username?: string | undefined;
 }

@@ -93,8 +93,9 @@ const PlayerHand: React.FC = () => {
             {showColorPicker && (
                 <ColorPicker onColorSelected={handleColorSelected} />
             )}
-
-            <RobloxAvatar playerName={myPlayer.user.username} scale={1} position={[0, 0, 8]} rotation={[0, 0, 0]} />
+            {myPlayer.user.roblox_username && (
+                <RobloxAvatar playerName={myPlayer.user.username} scale={1} position={[0, 0, 8]} rotation={[0, 0, 0]} />
+            )}
         </>
     );
 };

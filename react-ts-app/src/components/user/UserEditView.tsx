@@ -19,6 +19,7 @@ import {
 import { motion } from "framer-motion";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
+import GamesIcon from "@mui/icons-material/Games";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import FormTextField from "../controls/FormTextField";
 import ProgressBackdrop from "../controls/ProgressBackdrop";
@@ -28,6 +29,7 @@ import UserDS from "../../data_services/UserDS";
 type FormUserEditFields = {
   email: string;
   username: string;
+  roblox_username: string;
   profile_picture: FileList;
 };
 
@@ -51,6 +53,10 @@ function UserEditView() {
       .required("Le courriel est obligatoire")
       .email("Le courriel doit être valide")
       .max(100, "Le courriel doit contenir au plus 100 caractères"),
+    roblox_username: yup
+      .string()
+      .nullable()
+      .max(50, "Le nom d'utilisateur Roblox doit contenir au plus 50 caractères"),
     profile_picture: yup
       .mixed()
       .nullable()
@@ -79,6 +85,7 @@ function UserEditView() {
         const formFields: FormUserEditFields = {
           email: response.data.email,
           username: response.data.username,
+          roblox_username: response.data.roblox_username || "",
           profile_picture: [],
         };
         reset(formFields);
@@ -100,6 +107,7 @@ function UserEditView() {
       const userToSave: IUser = {
         email: data.email,
         username: data.username,
+        roblox_username: data.roblox_username || undefined,
         profile_picture:
           data.profile_picture && data.profile_picture[0]
             ? data.profile_picture[0]
@@ -308,6 +316,64 @@ function UserEditView() {
                     }
                   }}
                 />
+              </motion.div>
+              
+              <motion.div
+                initial={{ x: 50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.55 }}
+              >
+                <FormTextField
+                  autoComplete="off"
+                  disabled={isValidUser !== true}
+                  errorText={errors.roblox_username?.message}
+                  label="Nom d'utilisateur Roblox (optionnel)"
+                  registerReturn={register("roblox_username")}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <GamesIcon sx={{ color: "#64b5f6" }} />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: "rgba(255,255,255,0.05)",
+                      borderRadius: "10px",
+                      "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+                      "&:hover fieldset": { borderColor: "rgba(33, 150, 243, 0.5)" },
+                      "&.Mui-focused fieldset": { borderColor: "#2196f3" }
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "rgba(255,255,255,0.7)"
+                    },
+                    "& .MuiOutlinedInput-input": {
+                      color: "#fff"
+                    }
+                  }}
+                />
+              </motion.div>
+              
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
+              >
+                <Box sx={{ 
+                  color: "#64b5f6", 
+                  fontSize: "13px", 
+                  textAlign: "center", 
+                  mt: 1, 
+                  mb: 1,
+                  backgroundColor: "rgba(33, 150, 243, 0.1)",
+                  borderRadius: "8px",
+                  padding: "8px",
+                  border: "1px dashed rgba(100, 181, 246, 0.3)"
+                }}>
+                  <strong>Important:</strong> Votre nom d'utilisateur Roblox déterminera le modèle 3D qui vous représentera et sera affiché aux autres joueurs pendant la partie.
+                </Box>
               </motion.div>
               
               <Box sx={{ color: "#999", fontSize: "11px", textAlign: "center", mt: 1 }}>

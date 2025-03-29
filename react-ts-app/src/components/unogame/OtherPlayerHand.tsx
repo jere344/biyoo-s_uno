@@ -209,12 +209,14 @@ const OtherPlayerHand: React.FC<OtherPlayerHandProps> = ({
             )}
             
             {/* Roblox Avatar */}
-            <RobloxAvatar 
-                playerName={player.user.username} 
-                scale={1} 
-                position={[x, 0.5, z - 3.5]} 
-                rotation={[0, Math.PI + rotationY, 0]} 
-            />
+            {player.user.roblox_username && (
+                <RobloxAvatar 
+                    playerName={player.user.roblox_username} 
+                    scale={1} 
+                    position={[x, 0.5, z - 3.5]} 
+                    rotation={[0, Math.PI + rotationY, 0]} 
+                />
+            )}
             
             {/* Cards */}
             {cards}
