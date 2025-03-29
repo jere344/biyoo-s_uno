@@ -3,6 +3,7 @@ import UnoCard3D from "./UnoCard3D";
 import IUnoCard from "@DI/IUnoCard";
 import { useUnoGame } from "@hooks/useUnoGame";
 import ColorPicker from "./ColorPicker.tsx";
+import RobloxAvatar from "./RobloxAvatar.tsx";
 
 const PlayerHand: React.FC = () => {
     const { myPlayer, gameState, isMyTurn, playCard, soundManager } = useUnoGame();
@@ -92,6 +93,8 @@ const PlayerHand: React.FC = () => {
             {showColorPicker && (
                 <ColorPicker onColorSelected={handleColorSelected} />
             )}
+
+            <RobloxAvatar playerName={myPlayer.user.username} scale={1} position={[0, 0, 8]} rotation={[0, 0, 0]} />
         </>
     );
 };

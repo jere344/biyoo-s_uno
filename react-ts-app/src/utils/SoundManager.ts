@@ -32,7 +32,7 @@ export class SoundManager {
         cardPlay: '/audio/default/zapsplat_card_play.mp3',
         sayUno: '/audio/default/zhiyu_say_uno.mp3',
         denyUno: '/audio/default/zapsplat_deny_uno.mp3',
-        gameStart: '',
+        gameStart: '/audio/default/zapsplat_card_play.mp3',
         gameEnd: '/audio/default/zapsplat_applause.mp3',
         skipCard: '/audio/default/zapsplat_skip.mp3',
         reverseCard: '/audio/default/zapsplat_reverse.mp3',
@@ -54,7 +54,7 @@ export class SoundManager {
       this.musicAudio.volume = this.musicVolume;
     }
     
-    this.musicAudio.play().catch(e => console.error("Error playing music:", e));
+    this.musicAudio.play().catch(e => e);//e => console.error("Error playing music:", e));
     this.isMusicPlaying = true;
   }
   

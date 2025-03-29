@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Container, Typography, Box, Avatar } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import PeopleIcon from "@mui/icons-material/People";
@@ -73,6 +73,14 @@ export default function Room() {
                 console.error("Error leaving room:", error);
             });
     };
+
+    const gameComponent = useMemo(() => {
+        return (
+            <UnoGameProvider roomId={room.id} token={token}>
+                <UnoGameCanvas />
+            </UnoGameProvider>
+        );
+    }, [room.id, token]); // Only re-create when roomId or token changes
 
     return (
         <Box
@@ -250,9 +258,7 @@ export default function Room() {
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.3 }}
                         >
-                            <UnoGameProvider roomId={room.id} token={token}>
-                                <UnoGameCanvas />
-                            </UnoGameProvider>
+                            {gameComponent}
                         </motion.div>
                     </Grid>
                     

@@ -1,0 +1,215 @@
+
+Using Roblox’s avatar 3D api to import users’ avatars into a website (or whatever you’d like)
+Resources
+Community Tutorials
+Jun 2023
+May 2024
+inty
+intykatProgrammer
+Jun '23
+Introduction
+
+Hello! I was implementing Oauth 2.0 85 into a serverless website that I was making, and I stumbled upon roblox’ avatar 3D api 270 and thought it’d be a good idea to get the actual player model of the user who just logged in with oauth. I made a terrible mistake these have been the worst 5 days of my life. I got it working but trying to research this has been a horrible nightmare because there’s nothing out there explaining this api in the slightest, so today I’ll show you how to use the avatar 3d api, and how to handle the files that it returns.
+
+Example of final product:
+
+The api
+
+The api endpoint is https://thumbnails.roblox.com/v1/users/avatar-3d?userId=[id]. After you call it with the correct userId, it’ll dish out a response that looks like this:
+
+{
+  targetId: 2742412611,
+  state: 'Completed',
+  imageUrl: 'https://t4.rbxcdn.com/25f36fd018c36066eddc810c4abbf9b6'
+}
+
+    NOTE: if the state property is set to Pending or anything other than Completed the imageUrl will return null and could break your app, so keep that in mind!
+
+Now you have to fetch the data from that imageUrl property. After doing that you’ll get a response that looks like this:
+
+{
+  "camera": {
+    "position": {
+      "x": 0.563166,
+      "y": 106.218,
+      "z": -11.061
+    },
+    "direction": {
+      "x": 0.0924327,
+      "y": 0.258464,
+      "z": -0.961589
+    },
+    "fov": 28.3604
+  },
+  "aabb": {
+    "min": {
+      "x": -2.67336,
+      "y": 99.9628,
+      "z": -1.15667
+    },
+    "max": {
+      "x": 1.58785,
+      "y": 105.809,
+      "z": 3.63516
+    }
+  },
+  "mtl": "4454f6bdf777bd9d88d3929e41a93d48",
+  "obj": "01efa139613a6de7f98d7924596802aa",
+  "textures": [
+    "9b1e86351ca50dd3f6021578952e0ae7",
+    "9a5cbc3b0692eb30259c21ddc83977aa",
+    "46e9af1282cd9f26dffcbaca7d0aac9b",
+    "57032812c5fc8d6194e41882998d92b6",
+    "da7bb59fcf904771a16b8958c4e8bd3a",
+    "f582e4cdb727c3b6469fb8977394a764",
+    "c39fb360309303733bc873ce2c8166f1",
+    "63a9c20adda77d8f68c2d618cd19e9a9",
+    "1369e5ee30066a3b4986907d71df2112"
+  ]
+}
+
+You can probably tell what all of these properties do, but in case you’re wondering what the aabb is, this simply gives us coordinates that make the bounding box of the avatar. This will be very useful later.
+
+Now it’s actually impossible to get the files just from this, even though you have the IDs of these files, you have to ping the correct roblox cdn server. You see for whatever reason, all of these files are on completely different cdn servers and you have to get each file seperately. If you’re not familiar with cdns, a cdn link might look like this: https://t4.rbxcdn.com/.... This means you’re requesting a file from the 4th server region in the cdn.
+
+But fear not! We can actually figure out which cdn server to ping. That’s because the ID is actually a hash and has the exact server we’re looking for inside of it. I personally had 0 idea how to get that server, and it was absolutely not documented anywhere. This answer 47 by @local_ip had the solution and I am forever grateful to have found it. Orrrrr at least it used to… Roblox updated their API, and it’s a different formula. In javascript the NEW function for getting the cdn looks like this:
+
+function get(hash) {
+ for (var i = 31, t = 0; t < 38; t++)
+   i ^= hash[t].charCodeAt(0);
+ return `https://t${(i % 8).toString()}.rbxcdn.com/${hash}`;
+}
+
+Code Explanation
+Essentially what this codes does is it takes the ID, iterates through the first 32 characters, and performs a bitwise XOR operation on each character's integer representation (either directly or through conversion from hexadecimal) with the variable "i". The result of each iteration is stored back in "i" for the next iteration.
+
+After getting the CDN server, you can directly access the player model files directly from there. With a get request to the url.
+Handling and rendering the files
+
+    For the rest of this tutorial, code examples will be in react using react-three/fiber 23, which works similarly to a wrapper for three.js. I will be explaining every step though, so you should still be able to understand what I’m doing.
+
+Reminder of the files returned by the API
+Setting up the camera
+
+Positioning the camera and setting it up properly can be a little tricky. We can start by using the camera.position, and fov properties that the api provides to set the position and fov accordingly.
+
+<PerspectiveCamera makeDefault far={500} near={0.1} fov={camera.fov - 10} 
+position={new Vector3(camera.position.x, camera.position.y, camera.position.z)}/>
+
+Instead of using the camera.direction that the api returns, I want the camera to be looking in the center properly, this is where the aabb comes in handy. If we want the camera to be looking at the center of the model, then we can average out from each corner to get the center of the model. The equation looks like this:
+
+(aabb.min.x + aabb.max.x)/2, (aabb.max.y + aabb.min.y)/2, (aabb.max.z + aabb.min.z)/2)
+
+Then, we can just make the camera look directly at this point in space.
+
+<PerspectiveCamera makeDefault far={500} near={0.1} fov={camera.fov - 10} 
+position={new Vector3(camera.position.x, camera.position.y, camera.position.z)}
+onUpdate={self => self.lookAt(new Vector3((aabb.min.x + aabb.max.x)/2, (aabb.max.y + aabb.min.y)/2 + 2, (aabb.max.z + aabb.min.z)/2))}/>
+
+Loading the mesh and textures
+
+We can easily load in the obj file with the url for it. It’ll automatically be placed in front of the camera for you.
+
+const LoadModel = (props) => {
+    const object = useLoader(OBJLoader, props.url)
+    return <primitive object={object} />
+};
+
+This should make your scene look like so (I modified my fov and camera positioning to make it look more like a bust):
+
+image
+image1466×884 71.5 KB
+
+Now we just need to load the textures! Oh yeah. The textures.
+Roblox does this silly little thing where all of its exports have an alpha map that makes the model transparent. Why? Idk don’t ask me, I don’t work with modeling. But thankfully all we have to do is disable the alphamap.
+
+const LoadModel = (props) => {
+    const materials = useLoader(MTLLoader, props.mtl)
+    
+    for (const key in materials.materials) {
+      materials.materials[key].transparent = false
+    }
+
+    const object = useLoader(OBJLoader, props.url, loader => {
+      loader.setMaterials(materials)
+    })
+
+
+    return <primitive object={object} />
+};
+
+Woo!!! Our character!!! All textured an-
+la creatura
+la creatura1466×877 58.8 KB
+
+WHAT THE HELL IS THIS THING
+
+Remember when I said that roblox stores their files on different servers? This applies to all of the textures too. What’s happening is the mtl loader is seeing that the url of the mtl file is on, for example, t1.rbxcdn.com. So it automatically assumes that all of the texture files must be on t1.rbxcdn.com. One solution is to just download all of the files for the character onto your server, but it’s really slow and won’t work in serverless environments.
+
+Okay, so how do we fix this?
+It’s actually really simple, we just need to intercept the url that each resource is using, and reformat it to the right cdn. The code looks something like this:
+
+const LoadModel = (props) => {
+    const materials = useLoader(MTLLoader, props.mtl)
+    
+    for (const key in materials.materials) {
+      materials.materials[key].transparent = false
+    }
+
+    const object = useLoader(OBJLoader, props.url, loader => {
+      loader.setMaterials(materials)
+
+      loader.materials.manager.setURLModifier( ( url ) => {
+        var id = url.split('com/')[1]
+        return get(id);
+      });
+    })
+
+
+    return <primitive object={object} />
+};
+
+And there you have it! Just add some lighting and your fully rendered character is there. I added some spinny effects to mine :]
+
+
+
+
+
+Hello hello!
+
+Roblox updated their API and made a huge part of my tutorial completely invalid YAAAAAAAAYYYYYYYY
+
+I have updated the tutorial with the correct information, for more information on the new solution to decoding the hashes of the items please see this topic:
+
+
+Roblox CDN how to work out the hash
+
+
+Hello! A couple years ago I asked this question: Roblox CDN, How do I know which one to use? 46, this worked perfect for 2 years, but roblox has changed how their CDN works, its no longer f4f786ead2f4de8d6ab879ae2498e860 their CDN is now 30DAY-f4f786ead2f4de8d6ab879ae2498e860 and I can’t work out how to hash this correctly to work out the correct roblox subdomain, any suggestions?
+
+The old code says the API should be https://t4.rbxcdn.com/30DAY-f4f786ead2f4de8d6ab879ae2498e860 but its actually https://t6.rbxcdn.com/30DAY-f4f786ead2f4de8d6ab879ae2498e860
+
+Any Ideas?
+– Gerald :slight_smile:
+
+    Hello my lovely peeps, I have reverse engineer the roblox hash system!! Anyway for others who are struggling code is as followed. I know its virtually the same but this took 90mins to figure out ahahaha. function get(hash) { for (var i = 31, t = 0; t < 38; t++) i ^= hash[t].charCodeAt(0); … 
+
+
+Gerald563
+GeraldIn2016Web Developer
+Dec '23
+
+Hello my lovely peeps, I have reverse engineer the roblox hash system!!
+
+Anyway for others who are struggling code is as followed. I know its virtually the same but this took 90mins to figure out ahahaha.
+
+function get(hash) {
+  for (var i = 31, t = 0; t < 38; t++)
+    i ^= hash[t].charCodeAt(0);
+  return `https://t${(i % 8).toString()}.rbxcdn.com/${hash}`;
+}
+
+Happy Coding
+– Gerald :slight_smile:
+Solution
+14 days later

@@ -35,7 +35,9 @@ const Game3DScene: React.FC = () => {
             <OtherPlayersHands />
 
             {/* Game direction indicator */}
-            <Text position={[0, 0.5, -2]} color="white" fontSize={1.5} outlineWidth={0.05} outlineColor="black">
+            <Text position={[0, 0.3, 5.3]} 
+                rotation={[-Math.PI / 2, 0, 0]}
+            color="white" fontSize={1.5} outlineWidth={0.05} outlineColor="black">
                 {game.gameState.direction === true ? "→" : "←"}
             </Text>
         </>

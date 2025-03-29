@@ -1,7 +1,7 @@
 // src/data_services/ChatDS.ts
 import { AxiosResponse } from "axios";
 import CustomAxios from "./CustomAxios";
-import IMessage from "../interfaces/IMessage";
+import IMessage from "@DI/IMessage";
 
 const getMessages = (roomId: number): Promise<AxiosResponse<IMessage[]>> => CustomAxios.get(`rooms/${roomId}/chat/`);
 

@@ -21,7 +21,7 @@ import Leaderboard from "./components/Leaderboard";
 import AvatarEffectsShowcase from "./components/customAvatar/AvatarEffectsShowcase.tsx";
 
 createRoot(document.getElementById("root")!).render(
-    <StrictMode>
+    // <StrictMode>
         <BrowserRouter>
             <UserProvider>
                 <Routes>
@@ -47,5 +47,5 @@ createRoot(document.getElementById("root")!).render(
                 </Routes>
             </UserProvider>
         </BrowserRouter>
-    </StrictMode>
+    // </StrictMode>
 );

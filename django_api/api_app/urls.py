@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from api_app.consummers import chat_consummer, uno_game_consummer, user_consummer
-from api_app.views import room, script, shop, leaderboard  # added import for leaderboard
+from api_app.views import room, script, shop, leaderboard, avatar  # added import for avatar
 
 router = DefaultRouter()
 
@@ -33,6 +33,10 @@ urlpatterns = [
   path("shop/game_environments/inventory/activate/<int:inventory_id>/", shop.GameEnvironmentInventoryView.as_view(), name="activate_game_environment"),
   
   path("leaderboard/", leaderboard.LeaderboardView.as_view(), name="leaderboard"),
+  
+  # New routes for avatar models
+  path("avatar/<str:player_name>/model/", avatar.AvatarModelView.as_view(), name="avatar_model"),
+  path("avatar/<str:player_name>/file/<str:file_name>/", avatar.AvatarFileView.as_view(), name="avatar_file"),
 ]
 
 websocket_urlpatterns = [

@@ -50,7 +50,7 @@ const Hut: React.FC<HutProps> = ({ position = [0, -4.1, 0] }) => {
 
         // Calculate camera position relative to the hut position
 
-        camera.position.set(0, 3.5, 9);
+        camera.position.set(0, 3.5, 7);
         camera.lookAt(0, 2, 0);
         camera.far = 30;
         camera.near = 0.1;

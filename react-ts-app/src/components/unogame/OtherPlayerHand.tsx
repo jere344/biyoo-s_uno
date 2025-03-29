@@ -5,6 +5,7 @@ import { TextureLoader } from "three";
 import IUnoPlayer from "@DI/IUnoPlayer";
 import IUnoCard from "@DI/IUnoCard";
 import UnoCard3D from "./UnoCard3D";
+import RobloxAvatar from "./RobloxAvatar.tsx";
 import fontPath from "@assets/fonts/Roboto-Black_Regular_exclamation.json"; // a custom version with only the exclamation mark
 
 // Custom hook to preload the font
@@ -162,26 +163,26 @@ const OtherPlayerHand: React.FC<OtherPlayerHandProps> = ({
 
     return (
         <>
-            {/* Player's name */}
+            {/* Player's name - now on the table */}
             <Text
-                position={[x, 1.5, z]}
-                rotation={[0, rotationY, 0]}
+                position={[x * 0.70, 0.01, z * 0.70]} // Position on the table
+                rotation={[-Math.PI / 2, 0, -rotationY]}
                 color="white"
-                fontSize={0.5}
-                outlineWidth={0.05}
+                fontSize={0.4}
+                outlineWidth={0.04}
                 outlineColor="black"
                 anchorX="center"
-                anchorY="bottom"
+                anchorY="middle"
             >
-                {player.user.username} ({player.hand} cartes)
+                {player.user.username} ({player.hand})
             </Text>
             
-            {/* Profile picture */}
+            {/* Profile picture - now on the table */}
             {player.user?.profile_picture && (
                 <ProfilePicture 
                     imageUrl={player.user.profile_picture}
-                    position={[x, 2.8, z]}
-                    rotation={[0, rotationY, 0]}
+                    position={[x * 0.9, 0.02, z * 0.9]} // Position on the table
+                    rotation={[-Math.PI / 2, 0, -rotationY]} // Laying flat on the table
                 />
             )}
             
@@ -206,6 +207,14 @@ const OtherPlayerHand: React.FC<OtherPlayerHandProps> = ({
                     />
                 </Text3D>
             )}
+            
+            {/* Roblox Avatar */}
+            <RobloxAvatar 
+                playerName={player.user.username} 
+                scale={1} 
+                position={[x, 0.5, z - 3.5]} 
+                rotation={[0, Math.PI + rotationY, 0]} 
+            />
             
             {/* Cards */}
             {cards}
